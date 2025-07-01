@@ -1,314 +1,271 @@
-# TariffAI - Intelligent HTS & Tariff Management System
+# 🚢 TariffAI - Intelligent HTS & Tariff Management
 
-## Overview
+A comprehensive, AI-powered tariff management system that consolidates the best features from multiple projects into a clean, modern, and scalable solution.
 
-TariffAI is a comprehensive tariff management chatbot that provides intelligent HTS code search, tariff calculations, scenario analysis, and alternative sourcing recommendations. The system combines AI-powered search with real-time data to help businesses optimize their international trade operations.
+## ✨ Features
 
-## Features
+### 🎯 Core Capabilities
+- **Tariff Impact Calculation**: Compute tariffs and landed costs based on HS/HTS codes and material prices
+- **Product Detail Search & HTS Code Inference**: Retrieve product information and assign HTS codes using AI
+- **Material Proportion Suggestions**: Recommend alternative material compositions to reduce tariffs
+- **What-If Scenario Simulation**: Project cost impacts of tariff rate or sourcing country changes
+- **Alternative Sourcing Suggestions**: Propose countries with favorable tariffs
+- **Real-time Chat Interface**: Conversational AI for tariff-related queries
 
-### 🔍 **Intelligent HTS Search**
-- **Semantic Search**: AI-powered search using sentence transformers and ChromaDB
-- **Fallback Search**: Direct text search when AI search is unavailable
-- **Real-time Results**: Fast search with debounced input
-- **Quick Search Tags**: Pre-defined search terms for common products
+### 🏗️ Architecture
+- **Agentic AI System**: Specialized agents for classification, calculation, and material analysis
+- **FastAPI Backend**: Modern, async Python backend with comprehensive API
+- **React Frontend**: Beautiful, responsive UI with glassmorphism design and animations
+- **SQLite Database**: Lightweight, reliable data storage
+- **ChromaDB Vector Search**: Semantic search for HTS codes and product descriptions
+- **Ollama Integration**: Local LLM support for intelligent responses
 
-### 🤖 **AI Assistant**
-- **Natural Language Processing**: Chat with the AI about tariffs and trade
-- **Context Awareness**: Maintains conversation context
-- **Multi-modal Responses**: Text and structured data responses
-- **Fallback Handling**: Graceful degradation when AI services are unavailable
-
-### 🧮 **Tariff Calculator**
-- **Multi-factor Calculations**: Material cost, shipping, insurance, and duties
-- **Currency Conversion**: Real-time currency conversion using forex-python
-- **Country-specific Rates**: Support for different countries and trade agreements
-- **Detailed Breakdown**: Itemized cost analysis
-
-### 📊 **Scenario Analysis**
-- **What-if Analysis**: Compare different sourcing scenarios
-- **Cost Optimization**: Find the most cost-effective options
-- **Risk Assessment**: Evaluate supply chain risks
-- **Visualization**: Charts and graphs for analysis
-
-### 🌍 **Alternative Sourcing**
-- **Supplier Discovery**: Find alternative suppliers by country
-- **Cost Comparison**: Compare costs across different countries
-- **Lead Time Analysis**: Shipping and delivery time estimates
-- **Savings Calculation**: Potential cost savings analysis
-
-### 💱 **Currency Converter**
-- **Real-time Rates**: Live currency exchange rates
-- **Historical Data**: Historical rate tracking
-- **Multiple Currencies**: Support for major world currencies
-- **API Integration**: Reliable forex data sources
-
-### 📈 **Advanced Analytics**
-- **Custom Reports**: Generate detailed trade reports
-- **Data Visualization**: Interactive charts and graphs
-- **Export Options**: CSV, PDF, and JSON export formats
-- **Trend Analysis**: Historical data analysis
-
-### 🔔 **Alert System**
-- **Rate Monitoring**: Track tariff rate changes
-- **Email Notifications**: Automated email alerts
-- **Customizable Alerts**: Set up alerts for specific HTS codes
-- **Frequency Control**: Daily, weekly, or monthly alerts
-
-### 📥 **Data Ingestion**
-- **Manual Entry**: Add custom HTS codes and descriptions
-- **Bulk Import**: Import data from Excel files
-- **Validation**: Data quality checks and validation
-- **Integration**: Seamless integration with existing data
-
-## Technology Stack
-
-### Backend
-- **Framework**: FastAPI with async support
-- **Database**: ChromaDB for vector storage
-- **AI/ML**: Sentence Transformers, Ollama LLM
-- **Currency**: forex-python for exchange rates
-- **Data Processing**: Pandas, NumPy
-
-### Frontend
-- **Framework**: Vanilla JavaScript with modern CSS
-- **Styling**: CSS Grid, Flexbox, Glassmorphism
-- **Animations**: CSS animations and transitions
-- **Responsive**: Mobile-first design
-
-### Infrastructure
-- **Server**: Uvicorn ASGI server
-- **CORS**: Cross-origin resource sharing enabled
-- **Health Checks**: Comprehensive health monitoring
-- **Error Handling**: Graceful error handling and fallbacks
-
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.8+
-- Ollama (for LLM features)
-- Modern web browser
+- Node.js 16+
+- Ollama (optional, for local LLM)
 
-### Installation
+### Backend Setup
 
-1. **Clone the repository**
+1. **Navigate to backend directory:**
    ```bash
-   git clone <repository-url>
-   cd tariff-chatbot
+   cd backend
    ```
 
-2. **Create virtual environment**
+2. **Create virtual environment:**
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. **Install dependencies**
+3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Install Ollama (optional)**
+4. **Start the backend server:**
    ```bash
-   # Download from https://ollama.ai
-   # Install llama3.2:3b model
-   ollama pull llama3.2:3b
+   python main.py
    ```
 
-### Running the System
+The backend will be available at `http://localhost:8000`
 
-1. **Start the backend**
+### Frontend Setup
+
+1. **Navigate to frontend directory:**
    ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8000
+   cd frontend
    ```
 
-2. **Start the frontend**
+2. **Install dependencies:**
    ```bash
-   python -m http.server 3000
+   npm install
    ```
 
-3. **Access the application**
-   - Open your browser and go to `http://localhost:3000`
-   - The backend API will be available at `http://localhost:8000`
+3. **Start the development server:**
+   ```bash
+   npm start
+   ```
 
-## API Endpoints
+The frontend will be available at `http://localhost:3000`
 
-### Core Endpoints
-- `GET /health` - Health check
-- `POST /api/hts/search` - HTS code search
-- `POST /api/chat` - AI chat interface
+## 📁 Project Structure
 
-### Tariff Management
-- `POST /api/tariff/calculate` - Calculate tariffs
-- `POST /api/scenario/simulate` - Scenario analysis
-- `POST /api/currency/convert` - Currency conversion
-
-### Sourcing & Analytics
-- `POST /api/sourcing/suggest` - Alternative sourcing
-- `POST /api/product/search` - Product search
-- `POST /api/materials/suggest` - Material suggestions
-
-### Data Management
-- `POST /api/data/ingest` - Data ingestion
-- `GET /api/hts/codes` - Get HTS codes
-- `POST /api/alerts/subscribe` - Alert subscriptions
-
-## Usage Examples
-
-### HTS Code Search
-```javascript
-// Search for steel products
-const response = await fetch('/api/hts/search', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: 'steel pipes', limit: 10 })
-});
+```
+tariff-ai-consolidated/
+├── backend/
+│   ├── app/
+│   │   ├── agents/           # AI agents (orchestrator, classification, etc.)
+│   │   │   └── v1/          # API endpoints
+│   │   ├── api/
+│   │   │   └── v1/          # API endpoints
+│   │   ├── core/            # Configuration, database, responses
+│   │   └── services/        # Business logic services
+│   ├── data/               # Data files and ChromaDB storage
+│   ├── main.py             # FastAPI application entry point
+│   └── requirements.txt    # Python dependencies
+├── frontend/
+│   ├── src/
+│   │   ├── components/     # React components
+│   │   ├── services/       # API services
+│   │   ├── App.js          # Main React app
+│   │   └── App.css         # Styles with glassmorphism
+│   ├── public/             # Static assets
+│   └── package.json        # Node.js dependencies
+└── database/              # Database initialization scripts
 ```
 
-### Tariff Calculation
-```javascript
-// Calculate tariff for steel pipes
-const response = await fetch('/api/tariff/calculate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        hts_code: '7304.41.00',
-        material_cost: 1000,
-        country_of_origin: 'China',
-        shipping_cost: 200
-    })
-});
-```
+## 🤖 AI Agents
 
-### Alternative Sourcing
-```javascript
-// Find alternative sources
-const response = await fetch('/api/sourcing/suggest', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        hts_code: '7304.41.00',
-        current_country: 'China'
-    })
-});
-```
+### Orchestrator Agent
+- **Purpose**: Master coordinator that routes queries to appropriate specialist agents
+- **Capabilities**: Intent analysis, entity extraction, response coordination
 
-## Configuration
+### Classification Agent
+- **Purpose**: HTS code expert for product classification and search
+- **Capabilities**: Vector search, semantic matching, code validation
+
+### Tariff Calculator Agent
+- **Purpose**: Cost analysis and calculation specialist
+- **Capabilities**: Tariff calculations, scenario simulation, alternative sourcing
+
+### Material Analyzer Agent
+- **Purpose**: Material composition and optimization specialist
+- **Capabilities**: Material inference, alternative suggestions, quality assessment
+
+## 🎨 UI Features
+
+### Design System
+- **Glassmorphism**: Modern glass-like UI elements with backdrop blur
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Smooth Animations**: Framer Motion powered transitions and micro-interactions
+- **Dark Theme**: Beautiful gradient backgrounds with excellent contrast
+
+### Interactive Elements
+- **Real-time Chat**: Live conversation with AI assistant
+- **Smart Suggestions**: Context-aware quick action buttons
+- **Loading States**: Elegant loading animations and progress indicators
+- **Error Handling**: User-friendly error messages and recovery options
+
+## 🔧 Configuration
 
 ### Environment Variables
-- `OLLAMA_BASE_URL`: Ollama server URL (default: http://localhost:11434)
-- `CHROMA_DB_PATH`: ChromaDB storage path (default: ./data/chroma)
-- `EXCEL_DATA_PATH`: Excel file path (default: ./data/tariff_database_2025.xlsx)
+Create a `.env` file in the backend directory:
 
-### Data Sources
-The system uses a comprehensive tariff database with:
-- 12,912 HTS codes
-- 122 data columns
-- Multiple country rates
-- Trade agreement information
+```env
+# Server Configuration
+HOST=0.0.0.0
+PORT=8000
+DEBUG=false
 
-## System Architecture
+# Database
+DATABASE_URL=sqlite+aiosqlite:///./data/tariff_ai.db
 
-### Data Flow
-1. **User Input** → Frontend validation
-2. **API Request** → FastAPI backend
-3. **AI Processing** → Sentence transformers + ChromaDB
-4. **Fallback** → Direct text search if AI unavailable
-5. **Response** → Structured data + UI updates
+# AI/ML
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.2:3b
 
-### AI Components
-- **Embedding Model**: all-MiniLM-L6-v2 for semantic search
-- **LLM**: Ollama with llama3.2:3b model
-- **Vector Database**: ChromaDB for similarity search
-- **Fallback**: Fuzzy string matching
+# Vector Database
+CHROMA_DB_PATH=./data/chroma
 
-### Performance Optimizations
-- **Debounced Search**: 500ms delay to reduce API calls
-- **Caching**: ChromaDB for fast vector search
-- **Async Processing**: Non-blocking API calls
-- **Batch Processing**: Efficient data indexing
+# External APIs (optional)
+SERP_API_KEY=your_serp_api_key
+CURRENCY_API_KEY=your_currency_api_key
 
-## Troubleshooting
-
-### Common Issues
-
-1. **Backend not starting**
-   - Check if port 8000 is available
-   - Verify Python dependencies are installed
-   - Check for missing data files
-
-2. **AI features not working**
-   - Ensure Ollama is running
-   - Verify llama3.2:3b model is installed
-   - Check Ollama API connectivity
-
-3. **Search not returning results**
-   - Verify Excel data file exists
-   - Check ChromaDB initialization
-   - Ensure data indexing completed
-
-4. **Frontend not loading**
-   - Check if port 3000 is available
-   - Verify backend is running
-   - Check browser console for errors
-
-### Debug Mode
-Enable debug logging by setting the log level:
-```python
-logging.basicConfig(level=logging.DEBUG)
+# CORS
+CORS_ORIGINS=["http://localhost:3000","http://127.0.0.1:3000"]
 ```
 
-## Development
+## 📊 API Endpoints
 
-### Project Structure
+### Chat API
+- `POST /api/v1/chat/` - Send message to AI assistant
+- `GET /api/v1/chat/session/{session_id}` - Get session information
+- `DELETE /api/v1/chat/session/{session_id}` - Clear session
+- `GET /api/v1/chat/health` - Chat service health check
+
+### Health & Status
+- `GET /health` - Overall system health
+- `GET /` - API information and documentation links
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+cd backend
+pytest
 ```
-tariff-chatbot/
-├── main.py                 # Main FastAPI application
-├── index.html             # Frontend interface
-├── requirements.txt       # Python dependencies
-├── data/                  # Data storage
-│   ├── chroma/           # ChromaDB files
-│   └── tariff_database_2025.xlsx
-├── database/             # Database schemas
-├── exports/              # Generated reports
-├── uploads/              # File uploads
-└── docs/                 # Documentation
+
+### Frontend Tests
+```bash
+cd frontend
+npm test
 ```
 
-### Adding New Features
-1. **Backend**: Add new endpoints in `main.py`
-2. **Frontend**: Update `index.html` with new UI components
-3. **Testing**: Create test scripts for new functionality
-4. **Documentation**: Update README and API docs
+## 🚀 Deployment
 
-### Code Style
-- **Python**: PEP 8 compliance
-- **JavaScript**: ES6+ with modern syntax
-- **CSS**: BEM methodology for class naming
-- **Comments**: Comprehensive docstrings and inline comments
+### Production Build
+```bash
+# Backend
+cd backend
+pip install -r requirements.txt
+python main.py
 
-## Contributing
+# Frontend
+cd frontend
+npm run build
+```
+
+### Docker Deployment (Optional)
+```bash
+# Build and run with Docker Compose
+docker-compose up --build
+```
+
+## 🔍 Usage Examples
+
+### Tariff Calculation
+```
+User: "Calculate tariff for HTS 8471.30.01 with $500 material cost from China"
+AI: "Tariff calculation for HTS 8471.30.01 from China:
+     • Material Cost: $500.00
+     • Tariff Rate: 25.0%
+     • Tariff Amount: $125.00
+     • Total Landed Cost: $626.05"
+```
+
+### HTS Code Search
+```
+User: "Find HTS codes for smartphones"
+AI: "I found HTS code 8517.13.00 for 'Smartphones and mobile phones' with a tariff rate of 0.0%."
+```
+
+### Material Analysis
+```
+User: "Analyze material composition for nitrile gloves"
+AI: "Material analysis for gloves:
+     • Nitrile: 100% (tariff: 3.0%)
+     Suggested HTS Code: 4015.19.05"
+```
+
+### Scenario Simulation
+```
+User: "Compare sourcing from China vs Mexico for HTS 8471.30.01"
+AI: "Scenario comparison:
+     Original (from China): $626.05
+     New (from Mexico): $501.05
+     Difference: -$125.00 (-20.0%)"
+```
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## License
+## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## 🙏 Acknowledgments
+
+- **FastAPI** for the excellent async web framework
+- **React** and **Framer Motion** for the beautiful UI
+- **ChromaDB** for vector search capabilities
+- **Ollama** for local LLM support
+- **Inter font** for the beautiful typography
+
+## 📞 Support
 
 For support and questions:
-- Create an issue on GitHub
-- Check the troubleshooting section
-- Review the API documentation
-
-## Roadmap
-
-See [FUTURE_FEATURES_ROADMAP.md](FUTURE_FEATURES_ROADMAP.md) for planned features and implementation strategies.
+- Create an issue in the GitHub repository
+- Check the documentation at `/docs` when the backend is running
+- Review the API documentation at `/redoc`
 
 ---
 
-**TariffAI** - Making international trade smarter and more efficient. 
+**Built with ❤️ for intelligent tariff management** 

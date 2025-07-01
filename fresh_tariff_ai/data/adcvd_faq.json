@@ -1,0 +1,109 @@
+{
+  "title": "Antidumping and Countervailing Duties (AD/CVD) Frequently Asked Questions",
+  "faqs": [
+    {
+      "question": "What is dumping?",
+      "answer": "Dumping occurs when a foreign producer or exporter sells a product in the United States at a price that is below \"normal value.\" Normal value may be the price at which the foreign producer sells the merchandise in its own domestic market or a third-country market, or may be a constructed value based on its production costs plus an amount for profit. A separate surrogate-value based methodology is used to establish normal values for non-market economies. This entails valuing the non-market economy producer's factors of production using prices or costs from one or more surrogate market economy countries considered to be (1) at a level of economic development comparable to that of the non-market economy country of the producer and (2) a significant producer of comparable merchandise."
+    },
+    {
+      "question": "What is subsidization? Are all subsidies countervailable?",
+      "answer": "Governments subsidize enterprises or industries when they provide financial assistance to benefit the production, or exportation of goods through, e.g., direct cash payments, credits against taxes, and loans at terms that do not reflect market conditions. To be countervailable a subsidy must involve a government financial contribution that confers a benefit that is specific to a certain enterprise, industry or region in that country or that is contingent upon export or the use of domestic goods over imported goods in production."
+    },
+    {
+      "question": "What is the purpose of the antidumping and countervailing duty laws?",
+      "answer": "Antidumping and countervailing duties are intended to offset the value of dumping and/or subsidization, thereby leveling the playing field for domestic industries injured by such unfairly traded imports."
+    },
+    {
+      "question": "What are the roles of the United States International Trade Commission (ITC), Department of Commerce (Commerce), and the United States Customs and Border Protection (CBP) with regard to Antidumping and Countervailing Duty (AD/CVD) Proceedings?",
+      "answer": "The domestic industry files a petition with both Commerce and the ITC. Commerce reviews the petition for sufficiency and if it determines that the petition contains the relevant information, it will initiate an investigation into whether the goods subject to the petition are being sold at less than fair value or benefiting from unfair subsidization. Once an investigation has been initiated, Commerce investigates whether a producer or exporter is dumping and/or receiving unfair subsidies, while the ITC investigates whether the domestic industry is injured or there is a threat of injury because of the potentially dumped or subsidized imports. The office of Enforcement and Compliance within the International Trade Administration (ITA) at Commerce is responsible for enforcing the U.S. AD/CVD laws to protect United States' businesses from unfair competition resulting from unfair pricing by foreign companies and unfair government subsidies to foreign companies."
+    },
+    {
+      "question": "When does suspension of liquidation and collection of AD/CVD begin?",
+      "answer": "Suspension of liquidation of entries and collection of AD/CVD cash deposits (provisional measures) begin at the first affirmative Commerce determination in the AD/CVD investigation. This is usually at the time of Commerce's preliminary determination. At that time, Commerce will instruct CBP to suspend liquidation and collect cash deposits (i.e., provisional measures) beginning on the date its determination is published in the Federal Register. If, however, Commerce has found that critical circumstances exist, it will instruct CBP to suspend liquidation and collect cash deposits beginning 90 days prior to the date its determination is published in the Federal Register."
+    },
+    {
+      "question": "What are critical circumstances and what happens if it is determined that critical circumstances exist?",
+      "answer": "Critical circumstances arise when Commerce determines that exporters are flooding the U.S. market with imports of a product subject to an ongoing AD/CVD investigation. A finding of critical circumstances is an important tool to offset possible import surges during the period of an initial AD/CVD investigation."
+    },
+    {
+      "question": "How does a preliminary determination differ from a final determination?",
+      "answer": "Commerce issues a preliminary determination in AD/CVD investigations and reviews to allow parties involved in the proceeding an opportunity to review and comment on its AD/CVD determination, including the calculated margin of dumping or rate of subsidization. Commerce considers those comments and determines whether changes to its preliminary determination are appropriate. Commerce will then issue a final determination addressing parties' comments and finalizing its determination."
+    },
+    {
+      "question": "Who sets the duty rates of the imported merchandise that is subject to AD/CVD?",
+      "answer": "Commerce's ITA's Enforcement and Compliance calculates the AD/CVD rates and establishes the scope of AD/CVD orders. CBP enforces these decisions and collects the AD/CVD assessed on the imported goods."
+    },
+    {
+      "question": "How can I determine whether merchandise that I am planning to import is subject to antidumping or countervailing duties?",
+      "answer": "You need to review the scope of AD/CVD orders to determine whether the merchandise falls under the scope of an order. The scope of AD/CVD orders can be found in several places: Federal Register notices from Commerce, available at https://access.trade.gov/public/FRNoticesListLayout.aspx; Written instructions from Commerce to CBP, available in CBP's Automated Commercial Environment (ACE); Interested parties may request a scope ruling from Commerce; You may contact an Import Specialist at the appropriate Center of Excellence and Expertise, although that advice is not binding."
+    },
+    {
+      "question": "I know the Harmonized Tariff Schedule (HTS) classification of the goods that I import. How can I determine whether the HTS falls under the scope of an AD/CVD order?",
+      "answer": "HTS classifications are listed in the scope of AD/CVD orders for convenience in assisting importers in determining whether a product may be subject to an AD/CVD order. However, the written description of the scope of the order is dispositive, not the HTS classification. Accordingly, the inclusion or exclusion of an HTS classification in the scope of an AD/CVD order does not determine whether a product falls under the scope of an AD/CVD order."
+    },
+    {
+      "question": "How can I find a list of products covered by AD/CVD orders?",
+      "answer": "ACE contains comprehensive case information on every AD/CVD case. The ITC publishes a list of every AD/CVD case at http://www.usitc.gov/trade_remedy/documents/orders.xls. The website of Commerce's ITA, legacy.trade.gov/enforcement, under \"Products currently subject to AD/CVD Orders,\" also contains information on AD/CVD cases listed by country."
+    },
+    {
+      "question": "What is the AD/CVD case number and AD/CVD rate for the merchandise that I am planning to import?",
+      "answer": "ACE contains comprehensive case information on every AD/CVD case, including company-specific case numbers and AD/CVD cash deposit rates. Federal Register notices issued by Commerce list the case numbers and AD/CVD cash deposit rates. In addition, the Commerce instructions to CBP list the case numbers and AD/CVD cash deposit rates. These instructions are searchable and span the years 1992 to present."
+    },
+    {
+      "question": "I paid the AD/CVD due when I imported goods into the United States. Do I have any further AD/CVD liability on that import entry?",
+      "answer": "The AD/CVD paid at the time of entry are cash deposits of estimated AD/CVD duties. The final amount of duties owed is not determined until Commerce conducts an administrative review to establish the final AD/CVD rates on past entries. In other words, the final duties are assessed retrospectively on prior entries. The final AD/CVD amount may increase, decrease, or remain unchanged from the AD/CVD cash deposit paid at the time of entry."
+    },
+    {
+      "question": "I paid a fair price to my supplier for my imported merchandise, and the estimated AD/CVD duties that I paid are too high. How can I get a refund of the duties when CBP liquidates the entry?",
+      "answer": "You may request an administrative review of your imports from Commerce to determine the final AD/CVD duty liability. Commerce publishes a notice of opportunity to request a review each month in the Federal Register. Requests for administrative review must be submitted to Commerce during the anniversary month (i.e., the month of the particular AD or CVD order) to cover a review of entries from the prior anniversary month through the month prior to the current anniversary."
+    },
+    {
+      "question": "I do not believe that the goods that I imported fall under the scope of an AD/CVD order, and CBP required me to pay AD/CVD duties on my imported goods. How can I obtain a ruling that my products are not subject to AD/CVD?",
+      "answer": "You may request a ruling from Commerce regarding whether your product falls within the scope of an AD/CVD order. For more information on applying for a scope ruling, see https://legacy.trade.gov/enforcement/operations/scope/index.asp. Further, if you believe CBP misapplied the scope of the order as written, you may file a protest with CBP within 180 days after the entry has liquidated."
+    },
+    {
+      "question": "Do importers have to deposit AD/CVD duties while a Commerce scope determination is pending?",
+      "answer": "Yes, if CBP determines that imports are subject to the scope of an AD/CVD order, importers are required to deposit AD/CVD duties while a scope determination is pending. If Commerce rules that a product is not covered by the scope of an AD/CVD order, Commerce will normally instruct CBP to refund the AD/CVD cash deposits, and the importer will receive a refund of the deposit(s)."
+    },
+    {
+      "question": "What do I do if I believe the items I've imported were misclassified?",
+      "answer": "If an importer believes that the items they imported were misclassified, the importer should contact the appropriate Center for Excellence and Expertise. To view contact information for all Centers, visit www.cbp.gov/trade/centers-excellence-and-expertise-information."
+    },
+    {
+      "question": "I imported my merchandise using a consumption entry, paid the AD/CVD duties, and I now want to export the goods. Can I get a refund of my AD/CVD duties?",
+      "answer": "With regard to refunds of AD/CVD duties, the statute and regulations clearly applicable law prohibits \"any remission, abatement refund or drawback of duties\"… See 19 U.S.C. § 1558, and 19 § CFR 191.3(b)(3). Once the merchandise has been released from CBP custody, the importer is not entitled to a refund of AD/CVD duties, except for refunds due to overpayment of a duty, or as a result of a subsequent decrease in the duty rate resulting from an administrative review of that AD/CVD order at Commerce covering, as appropriate, the exporter or producer of the merchandise."
+    },
+    {
+      "question": "Are there any other special requirements for imports subject to AD/CVD duties?",
+      "answer": "Commerce's regulations require that, prior to liquidation and the assessment of antidumping duties (and countervailing duties if there is a CVD order on the same merchandise subject to an AD order), the importer is required to file a certificate advising CBP whether it has entered into an agreement or otherwise has received reimbursement of such duties. If an importer fails to provide a statement of reimbursement prior to liquidation, CBP will presume reimbursement and double the duties."
+    },
+    {
+      "question": "Are there publications available to the public regarding the AD/CVD processes?",
+      "answer": "Yes. There are several documents available from CBP, Commerce, and the ITC. CBP's website at www.cbp.gov contains several general publications on importing, including \"Importing into the United States.\" The website of Commerce's International Trade Administration, legacy.trade.gov/enforcement, contains links to Federal Register notices of AD/CVD decisions, a list of products currently subject to AD/CVD orders, reference materials and highlights and news of recent decisions and initiations. The website of the ITC, https://www.usitc.gov/trade_remedy/adcvd_handbook.htm for the Antidumping and Countervailing Duty Handbook."
+    },
+    {
+      "question": "Where can I find a telephone number for an Import Specialist team and the port of entry?",
+      "answer": "Import Specialists are now aligned with one of the Centers and focus on a specific industries and specific accounts. To find contact information for each of the Centers, please follow this link: www.cbp.gov/trade/centers-excellence-and-expertise-information/cee-directory. To find contact information for each of the ports of entry, please follow this link: www.cbp.gov/contact/ports/."
+    },
+    {
+      "question": "Where can I find a telephone number if I have questions for Commerce regarding administration of an AD/CVD Proceeding?",
+      "answer": "Enforcement and Compliance, the agency at Commerce that administers the AD/CVD statutes maintains a call center for the public. The telephone number is 202-482-0984."
+    },
+    {
+      "question": "I am a broker and my client claims that it is entitled to a zero percent AD/CVD cash deposit rate on its imports, however it is discovered that the importer is buying through a third party. How do I determine the correct rate?",
+      "answer": "To determine the proper AD/CVD case number and applicable cash deposit rate, you must first identify the exporter and manufacturer of the goods. Rates may be assigned to an exporter, an exporter/manufacturer combination, or a manufacturer. If the exporter has its own rate, use that rate. If the exporter does not have its own rate, determine if the manufacturer has its own rate. Be cognizant that if an exporter/manufacturer combination rate exists, the transaction must have the exporter and manufacturer combination present in order to qualify for the rate. After exhausting all of the above, there is no specific cash deposit rate assigned to the exporter, manufacturer or exporter/manufacturer combination, then the all-others or country-wide rate applies."
+    },
+    {
+      "question": "The specific 10-digit case number that an importer has been using for years now shows up in ACE as having a case status of \"Inactive – Company Deactivated.\" What does this mean? Is the imported merchandise subject to AD/CVD?",
+      "answer": "If the 10-digit case number has a case status of \"Inactive – Company Deactivated,\" the order likely still applies to this company, but this case number does not. Commerce typically applies \"Inactive – Company Deactivated\" when there has been a change in status for the company. Note, however, that a \"company deactivated\" status does not mean that the company is not subject to the AD/CVD order; rather, it means that this particular case number is no longer active for the company and merchandise can no longer be entered under this 10-digit case number."
+    },
+    {
+      "question": "The AD cash deposit instructions and the company record in ACE AD/CVD portal show a 0 percent AD/CVD cash deposit rate for the exporter that I am importing from. Since the AD cash deposit rate is 0 percent, do I need to file a type 03 entry?",
+      "answer": "Yes, you still need to file a type 03 entry and report the required antidumping or countervailing case information when the cash deposit rate is zero percent. A zero percent cash deposit rate for an active case number is not an indicator that the merchandise is not subject to the respective antidumping or countervailing duty order. Rather it means that the last calculated cash deposit rate for that company was zero, and AD/CVD should be reported at the time of entry. Should a higher rate be determined at the end of an administrative review, the importer will receive a bill for the difference between its zero cash deposit and the final margin, plus interest."
+    },
+    {
+      "question": "How can a customs broker query an HTS code in their ABI software to determine if a commodity is subject to AD/CVD?",
+      "answer": "It is important to note that an HTS code is only provided for convenience since the narrative description of the scope of an AD/CVD case is dispositive and the description and nature of the goods are what determine if the HTS code is within the scope of an AD/CVD case. That said, customs brokers have the capability to query an HTS code in their ABI Software to determine an applicable AD/CVD Case. However, some AD/CVD cases do not always provide the HTS at the 10-digit level. As a best practice, you should always query an HTS code at the 8- and 10-digit level to determine if an AD/CVD Case applies, but also review the description and nature of the goods to determine if they fall within the scope of any AD/CVD Case."
+    }
+  ]
+} 

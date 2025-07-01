@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # TariffAI Backend
+  tariffai-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tariffai-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - HOST=0.0.0.0
+      - PORT=8000
+      - CHROMA_DB_PATH=/app/data/chroma
+      - EXCEL_DATA_PATH=/app/data/tariff_database_2025.xlsx
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2:3b
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    networks:
+      - tariffai-network
+
+  # Ollama LLM Service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: tariffai-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - tariffai-network
+
+  # Frontend (Simple HTTP Server)
+  tariffai-frontend:
+    image: nginx:alpine
+    container_name: tariffai-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    restart: unless-stopped
+    networks:
+      - tariffai-network
+
+  # Optional: Redis for caching (uncomment if needed)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: tariffai-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - tariffai-network
+
+volumes:
+  ollama_data:
+  # redis_data:
+
+networks:
+  tariffai-network:
+    driver: bridge 
