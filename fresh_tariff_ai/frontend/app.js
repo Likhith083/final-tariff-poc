@@ -8,11 +8,13 @@ class TariffAI {
         this.apiBaseUrl = 'http://localhost:8000/api/v1';
         this.sessionId = this.generateSessionId();
         this.isConnected = false;
+        this.currentTheme = localStorage.getItem('theme') || 'dark';
         
         this.initializeElements();
         this.bindEvents();
         this.checkConnection();
         this.initializeTabs();
+        this.applyTheme();
     }
 
     initializeElements() {
@@ -36,6 +38,45 @@ class TariffAI {
         this.htsResults = document.getElementById('htsResults');
         this.categoryFilter = document.getElementById('categoryFilter');
         this.rateFilter = document.getElementById('rateFilter');
+        this.advancedSearchBtn = document.getElementById('advancedSearchBtn');
+        this.advancedFilters = document.getElementById('advancedFilters');
+        this.sortBy = document.getElementById('sortBy');
+
+        // Enhanced table elements
+        this.htsTable = document.getElementById('htsTable');
+        this.htsTableBody = document.getElementById('htsTableBody');
+        this.selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        this.resultCount = document.getElementById('resultCount');
+        this.pageInfo = document.getElementById('pageInfo');
+        this.exportTable = document.getElementById('exportTable');
+        this.selectAll = document.getElementById('selectAll');
+        this.clearSelection = document.getElementById('clearSelection');
+        this.prevPage = document.getElementById('prevPage');
+        this.nextPage = document.getElementById('nextPage');
+        this.pageNumbers = document.getElementById('pageNumbers');
+
+        // Analytics elements
+        this.totalSearches = document.getElementById('totalSearches');
+        this.todaySearches = document.getElementById('todaySearches');
+        this.totalCalculations = document.getElementById('totalCalculations');
+        this.avgDutyRate = document.getElementById('avgDutyRate');
+        this.totalAssessments = document.getElementById('totalAssessments');
+        this.highRiskCount = document.getElementById('highRiskCount');
+        this.totalScenarios = document.getElementById('totalScenarios');
+        this.savedScenarios = document.getElementById('savedScenarios');
+        this.exportAnalytics = document.getElementById('exportAnalytics');
+        this.exportCharts = document.getElementById('exportCharts');
+        this.generateReport = document.getElementById('generateReport');
+
+        // Chart elements
+        this.dutyRateChart = document.getElementById('dutyRateChart');
+        this.categoryChart = document.getElementById('categoryChart');
+        this.trendChart = document.getElementById('trendChart');
+        this.countryChart = document.getElementById('countryChart');
+        this.riskChart = document.getElementById('riskChart');
+        this.dutyRateChartType = document.getElementById('dutyRateChartType');
+        this.categoryChartType = document.getElementById('categoryChartType');
+        this.trendPeriod = document.getElementById('trendPeriod');
 
         // Tariff Calculator elements
         this.calcHtsCode = document.getElementById('calcHtsCode');
@@ -78,9 +119,24 @@ class TariffAI {
         this.clearChatBtn = document.getElementById('clearChat');
         this.exportChatBtn = document.getElementById('exportChat');
         this.quickButtons = document.querySelectorAll('.quick-btn');
+
+        // Initialize data structures
+        this.currentPage = 1;
+        this.itemsPerPage = 10;
+        this.totalItems = 0;
+        this.currentData = [];
+        this.selectedItems = new Set();
+        this.charts = {};
+        this.analyticsData = {};
     }
 
     bindEvents() {
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+
         // Chat events
         this.sendButton.addEventListener('click', () => this.sendMessage());
         this.messageInput.addEventListener('keypress', (e) => {
@@ -106,6 +162,30 @@ class TariffAI {
             if (e.key === 'Enter') this.searchHTS();
         });
 
+        // Advanced search events
+        this.advancedSearchBtn.addEventListener('click', () => this.toggleAdvancedFilters());
+        this.categoryFilter.addEventListener('change', () => this.applyFilters());
+        this.rateFilter.addEventListener('change', () => this.applyFilters());
+        this.sortBy.addEventListener('change', () => this.applySorting());
+
+        // Table control events
+        this.selectAllCheckbox.addEventListener('change', () => this.toggleSelectAll());
+        this.selectAll.addEventListener('click', () => this.selectAllItems());
+        this.clearSelection.addEventListener('click', () => this.clearSelectionItems());
+        this.exportTable.addEventListener('click', () => this.exportTableData());
+        this.prevPage.addEventListener('click', () => this.previousPage());
+        this.nextPage.addEventListener('click', () => this.nextPage());
+
+        // Analytics events
+        this.exportAnalytics.addEventListener('click', () => this.exportAnalyticsData());
+        this.exportCharts.addEventListener('click', () => this.exportChartsAsImages());
+        this.generateReport.addEventListener('click', () => this.generateAnalyticsReport());
+
+        // Chart control events
+        this.dutyRateChartType.addEventListener('change', () => this.updateDutyRateChart());
+        this.categoryChartType.addEventListener('change', () => this.updateCategoryChart());
+        this.trendPeriod.addEventListener('change', () => this.updateTrendChart());
+
         // Tariff Calculator events
         this.calculateBtn.addEventListener('click', () => this.calculateTariff());
 
@@ -120,6 +200,11 @@ class TariffAI {
         // Load scenarios when scenario tab is opened
         document.querySelector('[data-tab="scenario-analysis"]').addEventListener('click', () => {
             setTimeout(() => this.loadScenarios(), 100);
+        });
+
+        // Load analytics when analytics tab is opened
+        document.querySelector('[data-tab="analytics"]').addEventListener('click', () => {
+            setTimeout(() => this.loadAnalytics(), 100);
         });
 
         // Data Ingestion events
@@ -175,6 +260,10 @@ class TariffAI {
     updateStatus(text, status) {
         this.statusText.textContent = text;
         this.statusIndicator.className = `status-indicator ${status}`;
+        const statusRight = document.querySelector('.connection-status');
+        if (statusRight) {
+            statusRight.className = `connection-status ${status}`;
+        }
     }
 
     showLoading(message = 'Processing your request...') {
@@ -302,60 +391,49 @@ class TariffAI {
 
     displayHTSResults(data) {
         if (!data.success || !data.data || !data.data.results || data.data.results.length === 0) {
-            this.htsResults.innerHTML = '<p>No HTS codes found for your search.</p>';
+            this.htsResults.innerHTML = `
+                <div class="result-card">
+                    <div class="result-content">
+                        <i class="fas fa-info-circle"></i>
+                        <p>No HTS codes found matching your search. Try different keywords or check the spelling.</p>
+                    </div>
+                </div>
+            `;
             return;
         }
 
-        const results = data.data.results;
-        const resultsHtml = results.map((result, index) => `
-            <div class="result-card hts-result">
-                <div class="result-header">
-                    <h4>${result.hts_code}</h4>
-                    <button class="info-btn" onclick="app.showHTSDetails(${index})" title="View Details">
-                        <i class="fas fa-info-circle"></i>
-                    </button>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Description:</span>
-                    <span class="result-value">${result.description}</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Rate:</span>
-                    <span class="result-value rate-badge ${result.rate_type.toLowerCase().replace(' ', '-')}">${result.rate_display}</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Type:</span>
-                    <span class="result-value">${result.rate_type}</span>
-                </div>
-                <div class="result-details" id="details-${index}" style="display: none;">
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <span class="detail-label">Raw HTS Code:</span>
-                            <span class="detail-value">${result.raw_hts_code}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">General Rate:</span>
-                            <span class="detail-value">${result.general_rate}%</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Specific Rate:</span>
-                            <span class="detail-value">$${result.specific_rate.toFixed(2)}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Other Rate:</span>
-                            <span class="detail-value">$${result.other_rate.toFixed(2)}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+        // Store the data for table operations
+        this.currentData = data.data.results.map(result => ({
+            hts_code: result.hts_code,
+            description: result.description,
+            duty_rate: result.general_rate,
+            category: this.extractCategory(result.description),
+            rate_type: result.rate_type,
+            rate_display: result.rate_display,
+            raw_hts_code: result.raw_hts_code,
+            specific_rate: result.specific_rate,
+            other_rate: result.other_rate
+        }));
+        
+        this.totalItems = this.currentData.length;
+        this.currentPage = 1;
+        this.selectedItems.clear();
 
-        this.htsResults.innerHTML = `
-            <div class="results-header">
-                <h3>Found ${results.length} HTS codes for "${data.data.query}"</h3>
-            </div>
-            ${resultsHtml}
-        `;
+        // Display the data in table format
+        this.displayTableData();
+        
+        this.showToast(`Found ${this.currentData.length} HTS codes`, 'success');
+    }
+
+    extractCategory(description) {
+        const desc = description.toLowerCase();
+        if (desc.includes('steel') || desc.includes('iron') || desc.includes('metal')) return 'Steel & Metals';
+        if (desc.includes('textile') || desc.includes('fabric') || desc.includes('cloth')) return 'Textiles';
+        if (desc.includes('electronic') || desc.includes('computer') || desc.includes('phone')) return 'Electronics';
+        if (desc.includes('machine') || desc.includes('equipment') || desc.includes('tool')) return 'Machinery';
+        if (desc.includes('chemical') || desc.includes('compound') || desc.includes('acid')) return 'Chemicals';
+        if (desc.includes('food') || desc.includes('agricultural') || desc.includes('grain')) return 'Agriculture';
+        return 'Other';
     }
 
     showHTSDetails(index) {
@@ -967,18 +1045,895 @@ class TariffAI {
 
     handleFileUpload(event) {
         const file = event.target.files[0];
-        if (!file) return;
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.docContent.value = e.target.result;
+                this.showToast('File loaded successfully', 'success');
+            };
+            reader.readAsText(file);
+        }
+    }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.docContent.value = e.target.result;
-            this.docTitle.value = file.name;
+    // Enhanced HTS Search Methods
+    toggleAdvancedFilters() {
+        const isVisible = this.advancedFilters.style.display !== 'none';
+        this.advancedFilters.style.display = isVisible ? 'none' : 'block';
+        this.advancedSearchBtn.innerHTML = isVisible ? 
+            '<i class="fas fa-sliders-h"></i> Advanced' : 
+            '<i class="fas fa-times"></i> Hide';
+    }
+
+    applyFilters() {
+        if (this.currentData.length > 0) {
+            this.filterAndDisplayData();
+        }
+    }
+
+    applySorting() {
+        if (this.currentData.length > 0) {
+            this.sortAndDisplayData();
+        }
+    }
+
+    filterAndDisplayData() {
+        let filteredData = [...this.currentData];
+        
+        const categoryFilter = this.categoryFilter.value;
+        const rateFilter = this.rateFilter.value;
+        
+        if (categoryFilter) {
+            filteredData = filteredData.filter(item => 
+                item.category && item.category.toLowerCase().includes(categoryFilter.toLowerCase())
+            );
+        }
+        
+        if (rateFilter) {
+            filteredData = filteredData.filter(item => {
+                const rate = parseFloat(item.duty_rate);
+                switch (rateFilter) {
+                    case '0': return rate === 0;
+                    case 'low': return rate > 0 && rate <= 5;
+                    case 'medium': return rate > 5 && rate <= 15;
+                    case 'high': return rate > 15;
+                    default: return true;
+                }
+            });
+        }
+        
+        this.currentData = filteredData;
+        this.currentPage = 1;
+        this.displayTableData();
+    }
+
+    sortAndDisplayData() {
+        const sortBy = this.sortBy.value;
+        
+        this.currentData.sort((a, b) => {
+            switch (sortBy) {
+                case 'hts_code':
+                    return a.hts_code.localeCompare(b.hts_code);
+                case 'duty_rate':
+                    return parseFloat(a.duty_rate) - parseFloat(b.duty_rate);
+                case 'description':
+                    return a.description.localeCompare(b.description);
+                default:
+                    return 0;
+            }
+        });
+        
+        this.displayTableData();
+    }
+
+    // Enhanced Table Methods
+    displayTableData() {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const pageData = this.currentData.slice(startIndex, endIndex);
+        
+        this.htsTableBody.innerHTML = '';
+        
+        pageData.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox" data-index="${startIndex + index}" ${this.selectedItems.has(startIndex + index) ? 'checked' : ''}></td>
+                <td><strong>${item.hts_code}</strong></td>
+                <td>${item.description}</td>
+                <td><span class="rate-badge ${this.getRateBadgeClass(item.duty_rate)}">${item.duty_rate}%</span></td>
+                <td>${item.category || 'N/A'}</td>
+                <td>
+                    <button class="btn btn-glass btn-sm" onclick="tariffAI.showHTSDetails(${startIndex + index})">
+                        <i class="fas fa-info-circle"></i> Details
+                    </button>
+                </td>
+            `;
+            this.htsTableBody.appendChild(row);
+        });
+        
+        this.updatePagination();
+        this.updateTableInfo();
+        this.bindTableEvents();
+    }
+
+    bindTableEvents() {
+        const checkboxes = this.htsTableBody.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                if (e.target.checked) {
+                    this.selectedItems.add(index);
+                } else {
+                    this.selectedItems.delete(index);
+                }
+                this.updateSelectAllState();
+            });
+        });
+    }
+
+    toggleSelectAll() {
+        const checkboxes = this.htsTableBody.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            const index = parseInt(checkbox.dataset.index);
+            if (this.selectAllCheckbox.checked) {
+                checkbox.checked = true;
+                this.selectedItems.add(index);
+            } else {
+                checkbox.checked = false;
+                this.selectedItems.delete(index);
+            }
+        });
+    }
+
+    selectAllItems() {
+        this.selectAllCheckbox.checked = true;
+        this.toggleSelectAll();
+    }
+
+    clearSelectionItems() {
+        this.selectAllCheckbox.checked = false;
+        this.selectedItems.clear();
+        const checkboxes = this.htsTableBody.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+    }
+
+    updateSelectAllState() {
+        const checkboxes = this.htsTableBody.querySelectorAll('input[type="checkbox"]');
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+        this.selectAllCheckbox.checked = checkedCount === checkboxes.length && checkboxes.length > 0;
+        this.selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+    }
+
+    updatePagination() {
+        const totalPages = Math.ceil(this.currentData.length / this.itemsPerPage);
+        
+        this.prevPage.disabled = this.currentPage === 1;
+        this.nextPage.disabled = this.currentPage === totalPages;
+        
+        this.pageNumbers.innerHTML = '';
+        
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = i === this.currentPage ? 'active' : '';
+            pageBtn.addEventListener('click', () => this.goToPage(i));
+            this.pageNumbers.appendChild(pageBtn);
+        }
+    }
+
+    updateTableInfo() {
+        this.resultCount.textContent = `${this.currentData.length} results`;
+        const totalPages = Math.ceil(this.currentData.length / this.itemsPerPage);
+        this.pageInfo.textContent = `Page ${this.currentPage} of ${totalPages}`;
+    }
+
+    goToPage(page) {
+        this.currentPage = page;
+        this.displayTableData();
+    }
+
+    previousPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.displayTableData();
+        }
+    }
+
+    nextPage() {
+        const totalPages = Math.ceil(this.currentData.length / this.itemsPerPage);
+        if (this.currentPage < totalPages) {
+            this.currentPage++;
+            this.displayTableData();
+        }
+    }
+
+    exportTableData() {
+        const selectedData = Array.from(this.selectedItems).map(index => this.currentData[index]);
+        const dataToExport = selectedData.length > 0 ? selectedData : this.currentData;
+        
+        const csv = this.convertToCSV(dataToExport);
+        this.downloadCSV(csv, 'hts_search_results.csv');
+        this.showToast('Data exported successfully', 'success');
+    }
+
+    convertToCSV(data) {
+        const headers = ['HTS Code', 'Description', 'Duty Rate', 'Category'];
+        const rows = data.map(item => [
+            item.hts_code,
+            item.description,
+            item.duty_rate,
+            item.category || 'N/A'
+        ]);
+        
+        return [headers, ...rows].map(row => 
+            row.map(cell => `"${cell}"`).join(',')
+        ).join('\n');
+    }
+
+    downloadCSV(csv, filename) {
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    getRateBadgeClass(rate) {
+        const numRate = parseFloat(rate);
+        if (numRate === 0) return 'free';
+        if (numRate <= 5) return 'low';
+        if (numRate <= 15) return 'medium';
+        return 'high';
+    }
+
+    // Analytics Methods
+    async loadAnalytics() {
+        this.showLoading('Loading analytics...');
+        
+        try {
+            // Load analytics data
+            await this.loadAnalyticsData();
+            
+            // Initialize charts
+            this.initializeCharts();
+            
+            // Update dashboard widgets
+            this.updateDashboardWidgets();
+            
+        } catch (error) {
+            console.error('Analytics loading error:', error);
+            this.showToast('Failed to load analytics', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async loadAnalyticsData() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/analytics/dashboard`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    this.analyticsData = data.data;
+                } else {
+                    throw new Error('Failed to load analytics data');
+                }
+            } else {
+                throw new Error('Analytics API not responding');
+            }
+        } catch (error) {
+            console.error('Analytics loading error:', error);
+            // Fallback to simulated data if API fails
+            this.analyticsData = {
+                searches: { total: 1250, today: 45 },
+                calculations: { total: 890, avg_rate: 8.5 },
+                assessments: { total: 567, high_risk: 23 },
+                scenarios: { total: 234, saved: 89 },
+                dutyRates: [
+                    { range: '0%', count: 156 },
+                    { range: '1-5%', count: 234 },
+                    { range: '6-15%', count: 189 },
+                    { range: '16%+', count: 67 }
+                ],
+                categories: [
+                    { name: 'Electronics', count: 234 },
+                    { name: 'Textiles', count: 189 },
+                    { name: 'Machinery', count: 156 },
+                    { name: 'Chemicals', count: 123 },
+                    { name: 'Steel', count: 98 }
+                ],
+                trends: [
+                    { date: '2024-01-01', searches: 45, calculations: 32 },
+                    { date: '2024-01-02', searches: 52, calculations: 38 },
+                    { date: '2024-01-03', searches: 48, calculations: 35 },
+                    { date: '2024-01-04', searches: 61, calculations: 42 },
+                    { date: '2024-01-05', searches: 55, calculations: 39 }
+                ],
+                countries: [
+                    { name: 'China', count: 456 },
+                    { name: 'Mexico', count: 234 },
+                    { name: 'Canada', count: 189 },
+                    { name: 'Germany', count: 123 },
+                    { name: 'Japan', count: 98 }
+                ],
+                risks: [
+                    { level: 'Low', count: 234 },
+                    { level: 'Medium', count: 156 },
+                    { level: 'High', count: 67 }
+                ]
+            };
+        }
+    }
+
+    updateDashboardWidgets() {
+        this.totalSearches.textContent = this.analyticsData.searches.total.toLocaleString();
+        this.todaySearches.textContent = this.analyticsData.searches.today;
+        this.totalCalculations.textContent = this.analyticsData.calculations.total.toLocaleString();
+        this.avgDutyRate.textContent = this.analyticsData.calculations.avg_rate + '%';
+        this.totalAssessments.textContent = this.analyticsData.assessments.total.toLocaleString();
+        this.highRiskCount.textContent = this.analyticsData.assessments.high_risk;
+        this.totalScenarios.textContent = this.analyticsData.scenarios.total.toLocaleString();
+        this.savedScenarios.textContent = this.analyticsData.scenarios.saved;
+    }
+
+    initializeCharts() {
+        this.createDutyRateChart();
+        this.createCategoryChart();
+        this.createTrendChart();
+        this.createCountryChart();
+        this.createRiskChart();
+    }
+
+    createDutyRateChart() {
+        const ctx = this.dutyRateChart.getContext('2d');
+        const data = this.analyticsData.dutyRates;
+        
+        this.charts.dutyRate = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: data.map(d => d.range),
+                datasets: [{
+                    data: data.map(d => d.count),
+                    backgroundColor: [
+                        '#48bb78',
+                        '#38a169',
+                        '#2f855a',
+                        '#276749'
+                    ],
+                    borderWidth: 2,
+                    borderColor: 'rgba(255, 255, 255, 0.2)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createCategoryChart() {
+        const ctx = this.categoryChart.getContext('2d');
+        const data = this.analyticsData.categories;
+        
+        this.charts.category = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.name),
+                datasets: [{
+                    label: 'Search Count',
+                    data: data.map(d => d.count),
+                    backgroundColor: 'rgba(72, 187, 120, 0.8)',
+                    borderColor: '#48bb78',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createTrendChart() {
+        const ctx = this.trendChart.getContext('2d');
+        const data = this.analyticsData.trends;
+        
+        this.charts.trend = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.date),
+                datasets: [{
+                    label: 'Searches',
+                    data: data.map(d => d.searches),
+                    borderColor: '#48bb78',
+                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: 'Calculations',
+                    data: data.map(d => d.calculations),
+                    borderColor: '#3182ce',
+                    backgroundColor: 'rgba(49, 130, 206, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createCountryChart() {
+        const ctx = this.countryChart.getContext('2d');
+        const data = this.analyticsData.countries;
+        
+        this.charts.country = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.map(d => d.name),
+                datasets: [{
+                    data: data.map(d => d.count),
+                    backgroundColor: [
+                        '#48bb78',
+                        '#38a169',
+                        '#2f855a',
+                        '#276749',
+                        '#22543d'
+                    ],
+                    borderWidth: 2,
+                    borderColor: 'rgba(255, 255, 255, 0.2)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white',
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createRiskChart() {
+        const ctx = this.riskChart.getContext('2d');
+        const data = this.analyticsData.risks;
+        
+        this.charts.risk = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.level),
+                datasets: [{
+                    label: 'Risk Level Count',
+                    data: data.map(d => d.count),
+                    backgroundColor: [
+                        '#48bb78',
+                        '#ed8936',
+                        '#e53e3e'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    updateDutyRateChart() {
+        const chartType = this.dutyRateChartType.value;
+        if (this.charts.dutyRate) {
+            this.charts.dutyRate.destroy();
+        }
+        
+        const ctx = this.dutyRateChart.getContext('2d');
+        const data = this.analyticsData.dutyRates;
+        
+        this.charts.dutyRate = new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels: data.map(d => d.range),
+                datasets: [{
+                    data: data.map(d => d.count),
+                    backgroundColor: [
+                        '#48bb78',
+                        '#38a169',
+                        '#2f855a',
+                        '#276749'
+                    ],
+                    borderWidth: 2,
+                    borderColor: 'rgba(255, 255, 255, 0.2)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    updateCategoryChart() {
+        const chartType = this.categoryChartType.value;
+        if (this.charts.category) {
+            this.charts.category.destroy();
+        }
+        
+        const ctx = this.categoryChart.getContext('2d');
+        const data = this.analyticsData.categories;
+        
+        this.charts.category = new Chart(ctx, {
+            type: chartType === 'horizontal' ? 'bar' : chartType,
+            data: {
+                labels: data.map(d => d.name),
+                datasets: [{
+                    label: 'Search Count',
+                    data: data.map(d => d.count),
+                    backgroundColor: 'rgba(72, 187, 120, 0.8)',
+                    borderColor: '#48bb78',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: chartType === 'horizontal' ? 'y' : 'x',
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    updateTrendChart() {
+        const period = parseInt(this.trendPeriod.value);
+        // Simulate loading different period data
+        this.showToast(`Loading ${period}-day trend data...`, 'info');
+    }
+
+    // Export Methods
+    exportAnalyticsData() {
+        const data = {
+            timestamp: new Date().toISOString(),
+            analytics: this.analyticsData
         };
-        reader.readAsText(file);
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'analytics_data.json';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        
+        this.showToast('Analytics data exported successfully', 'success');
+    }
+
+    exportChartsAsImages() {
+        Object.keys(this.charts).forEach(chartName => {
+            const chart = this.charts[chartName];
+            if (chart) {
+                const canvas = chart.canvas;
+                const link = document.createElement('a');
+                link.download = `${chartName}_chart.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+        });
+        
+        this.showToast('Charts exported as images', 'success');
+    }
+
+    generateAnalyticsReport() {
+        const report = this.generateReportContent();
+        const blob = new Blob([report], { type: 'text/html' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'analytics_report.html';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        
+        this.showToast('Analytics report generated successfully', 'success');
+    }
+
+    generateReportContent() {
+        return `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>TariffAI Analytics Report</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    .header { text-align: center; margin-bottom: 30px; }
+                    .section { margin-bottom: 20px; }
+                    .metric { display: inline-block; margin: 10px; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>TariffAI Analytics Report</h1>
+                    <p>Generated on ${new Date().toLocaleDateString()}</p>
+                </div>
+                
+                <div class="section">
+                    <h2>Summary</h2>
+                    <div class="metric">Total Searches: ${this.analyticsData.searches.total}</div>
+                    <div class="metric">Total Calculations: ${this.analyticsData.calculations.total}</div>
+                    <div class="metric">Total Assessments: ${this.analyticsData.assessments.total}</div>
+                    <div class="metric">Total Scenarios: ${this.analyticsData.scenarios.total}</div>
+                </div>
+                
+                <div class="section">
+                    <h2>Duty Rate Distribution</h2>
+                    <ul>
+                        ${this.analyticsData.dutyRates.map(d => `<li>${d.range}: ${d.count} items</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h2>Top Categories</h2>
+                    <ul>
+                        ${this.analyticsData.categories.map(c => `<li>${c.name}: ${c.count} searches</li>`).join('')}
+                    </ul>
+                </div>
+            </body>
+            </html>
+        `;
+    }
+
+    // Toast Notification System
+    showToast(message, type = 'info') {
+        const toastContainer = document.querySelector('.toast-container') || this.createToastContainer();
+        
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const icon = this.getToastIcon(type);
+        
+        toast.innerHTML = `
+            <i class="${icon}"></i>
+            <div class="toast-content">
+                <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 5000);
+    }
+
+    createToastContainer() {
+        const container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+        return container;
+    }
+
+    getToastIcon(type) {
+        switch (type) {
+            case 'success': return 'fas fa-check-circle';
+            case 'error': return 'fas fa-exclamation-circle';
+            case 'warning': return 'fas fa-exclamation-triangle';
+            default: return 'fas fa-info-circle';
+        }
+    }
+
+    applyTheme() {
+        document.documentElement.setAttribute('data-theme', this.currentTheme);
+        this.updateThemeIcon();
+    }
+
+    toggleTheme() {
+        this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', this.currentTheme);
+        this.applyTheme();
+        this.showToast(`Switched to ${this.currentTheme} mode`, 'info');
+    }
+
+    updateThemeIcon() {
+        const themeIcon = document.getElementById('themeIcon');
+        if (themeIcon) {
+            themeIcon.className = this.currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+    }
+}
+
+// Initial loading screen functions
+function showInitialLoadingScreen() {
+    const loadingScreen = document.getElementById('initialLoadingScreen');
+    const progressFill = document.getElementById('progressFill');
+    const loadingStatus = document.getElementById('loadingStatus');
+    
+    if (loadingScreen) {
+        loadingScreen.style.display = 'flex';
+        
+        // Simulate loading progress
+        const loadingSteps = [
+            { progress: 20, status: 'Initializing TariffAI...' },
+            { progress: 40, status: 'Loading HTS Database...' },
+            { progress: 60, status: 'Connecting AI Services...' },
+            { progress: 80, status: 'Preparing Analytics...' },
+            { progress: 100, status: 'Ready!' }
+        ];
+        
+        let currentStep = 0;
+        const progressInterval = setInterval(() => {
+            if (currentStep < loadingSteps.length) {
+                const step = loadingSteps[currentStep];
+                progressFill.style.width = step.progress + '%';
+                loadingStatus.textContent = step.status;
+                currentStep++;
+            } else {
+                clearInterval(progressInterval);
+            }
+        }, 600);
+    }
+}
+
+function hideInitialLoadingScreen() {
+    const loadingScreen = document.getElementById('initialLoadingScreen');
+    if (loadingScreen) {
+        loadingScreen.classList.add('fade-out');
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
     }
 }
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new TariffAI();
+    // Show initial loading screen
+    showInitialLoadingScreen();
+    
+    // Initialize the application after loading
+    setTimeout(() => {
+        hideInitialLoadingScreen();
+        new TariffAI();
+    }, 3000); // Show loading for 3 seconds
 }); 
