@@ -28,10 +28,12 @@ class AIService:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.base_url}/api/generate",
+                    f"{self.base_url}/api/chat",
                     json={
                         "model": self.model,
-                        "prompt": enhanced_prompt,
+                        "messages": [
+                            {"role": "user", "content": enhanced_prompt}
+                        ],
                         "stream": False,
                         "options": {
                             "temperature": 0.7,
@@ -44,7 +46,15 @@ class AIService:
                 
                 if response.status_code == 200:
                     result = response.json()
-                    return result.get("response", "I apologize, but I couldn't generate a response at this time.")
+                    # Ollama returns the response in result['message']['content'] or result['message']
+                    if 'message' in result and isinstance(result['message'], dict):
+                        return result['message'].get('content', "I apologize, but I couldn't generate a response at this time.")
+                    elif 'message' in result:
+                        return result['message']
+                    elif 'response' in result:
+                        return result['response']
+                    else:
+                        return "I apologize, but I couldn't generate a response at this time."
                 else:
                     return "I'm experiencing technical difficulties. Please try again later."
                     
@@ -95,31 +105,17 @@ Remember: Your responses should be informative, accurate, and actionable for tra
     async def classify_product(self, description: str) -> Dict[str, Any]:
         """Classify a product and suggest HTS codes"""
         
-        prompt = f"""Based on the following product description, suggest the most appropriate HTS code and provide a brief explanation:
-
-Product: {description}
-
-Please provide:
-1. Suggested HTS code (6-10 digits)
-2. Brief explanation of classification
-3. General duty rate range (if known)
-4. Any special considerations
-
-Format your response as JSON:
-{{
-    "hts_code": "code",
-    "explanation": "explanation",
-    "duty_rate_range": "range",
-    "considerations": "considerations"
-}}"""
+        prompt = f"""Based on the following product description, suggest the most appropriate HTS code and provide a brief explanation:\n\nProduct: {description}\n\nPlease provide:\n1. Suggested HTS code (6-10 digits)\n2. Brief explanation of classification\n3. General duty rate range (if known)\n4. Any special considerations\n\nFormat your response as JSON:\n{{\n    \"hts_code\": \"code\",\n    \"explanation\": \"explanation\",\n    \"duty_rate_range\": \"range\",\n    \"considerations\": \"considerations\"\n}}"""
 
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.base_url}/api/generate",
+                    f"{self.base_url}/api/chat",
                     json={
                         "model": self.model,
-                        "prompt": prompt,
+                        "messages": [
+                            {"role": "user", "content": prompt}
+                        ],
                         "stream": False,
                         "options": {
                             "temperature": 0.3,
@@ -131,8 +127,15 @@ Format your response as JSON:
                 
                 if response.status_code == 200:
                     result = response.json()
-                    response_text = result.get("response", "")
-                    
+                    response_text = None
+                    if 'message' in result and isinstance(result['message'], dict):
+                        response_text = result['message'].get('content', "")
+                    elif 'message' in result:
+                        response_text = result['message']
+                    elif 'response' in result:
+                        response_text = result['response']
+                    else:
+                        response_text = ""
                     # Try to parse JSON response
                     try:
                         return json.loads(response_text)
@@ -163,27 +166,17 @@ Format your response as JSON:
     async def explain_duty_calculation(self, hts_code: str, duty_rate: float, value: float) -> str:
         """Explain duty calculation for educational purposes"""
         
-        prompt = f"""Explain how duty is calculated for the following:
-
-HTS Code: {hts_code}
-Duty Rate: {duty_rate}%
-Value: ${value:,.2f}
-
-Please explain:
-1. How the duty amount is calculated
-2. What factors might affect the duty rate
-3. Any special considerations for this HTS code
-4. Tips for accurate valuation
-
-Keep the explanation clear and educational."""
+        prompt = f"""Explain how duty is calculated for the following:\n\nHTS Code: {hts_code}\nDuty Rate: {duty_rate}%\nValue: ${value:,.2f}\n\nPlease explain:\n1. How the duty amount is calculated\n2. What factors might affect the duty rate\n3. Any special considerations for this HTS code\n4. Tips for accurate valuation\n\nKeep the explanation clear and educational."""
 
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.base_url}/api/generate",
+                    f"{self.base_url}/api/chat",
                     json={
                         "model": self.model,
-                        "prompt": prompt,
+                        "messages": [
+                            {"role": "user", "content": prompt}
+                        ],
                         "stream": False,
                         "options": {
                             "temperature": 0.5,
@@ -195,10 +188,17 @@ Keep the explanation clear and educational."""
                 
                 if response.status_code == 200:
                     result = response.json()
-                    return result.get("response", "Unable to provide explanation at this time.")
+                    if 'message' in result and isinstance(result['message'], dict):
+                        return result['message'].get('content', "Unable to provide explanation at this time.")
+                    elif 'message' in result:
+                        return result['message']
+                    elif 'response' in result:
+                        return result['response']
+                    else:
+                        return "Unable to provide explanation at this time."
                 else:
                     return "Explanation service is currently unavailable."
                     
         except Exception as e:
-            print(f"Explanation Error: {str(e)}")
+            print(f"Duty Calculation Error: {str(e)}")
             return "Explanation service is currently unavailable." 
