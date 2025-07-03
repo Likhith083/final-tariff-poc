@@ -1,137 +1,169 @@
-"""
-Chat API endpoints for TariffAI
-"""
-import logging
-from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from sqlalchemy.orm import Session
+from typing import List
+from datetime import datetime
+import json
 
-from ...core.responses import ChatResponse, ErrorResponse
-from ...agents.orchestrator import OrchestratorAgent
+from app.core.database import get_db
+from app.models.chat import ChatSession, ChatMessage
+from app.schemas.chat import (
+    ChatRequest, ChatResponse, ChatSessionResponse, 
+    ChatMessageResponse, ChatSessionCreate
+)
+from app.services.ai_service import AIService
 
-logger = logging.getLogger(__name__)
+router = APIRouter()
+ai_service = AIService()
 
-router = APIRouter(prefix="/chat", tags=["chat"])
-
-# Initialize orchestrator agent
-orchestrator = OrchestratorAgent()
-
-
-class ChatRequest(BaseModel):
-    """Chat request model"""
-    message: str
-    session_id: Optional[str] = None
-
-
-class ChatHistoryRequest(BaseModel):
-    """Chat history request model"""
-    session_id: str
-
-
-@router.post("/", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
-    """
-    Main chat endpoint for tariff-related queries
-    """
-    try:
-        if not request.message.strip():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Message cannot be empty"
-            )
-        
-        # Process the query through the orchestrator
-        response = await orchestrator.process_query(
-            message=request.message,
-            session_id=request.session_id
+@router.post("/send", response_model=ChatResponse)
+async def send_message(
+    request: ChatRequest,
+    db: Session = Depends(get_db)
+):
+    """Send a message to the AI and get a response"""
+    
+    # Get or create chat session (simplified without user authentication)
+    if request.session_id:
+        session = db.query(ChatSession).filter(
+            ChatSession.id == request.session_id
+        ).first()
+        if not session:
+            raise HTTPException(status_code=404, detail="Chat session not found")
+    else:
+        # Create new session with default user_id
+        session = ChatSession(
+            user_id=1,  # Default user ID
+            title=request.session_title or "New Chat"
         )
+        db.add(session)
+        db.commit()
+        db.refresh(session)
+    
+    # Save user message
+    user_message = ChatMessage(
+        session_id=session.id,
+        role="user",
+        content=request.message
+    )
+    db.add(user_message)
+    db.commit()
+    
+    # Get AI response
+    try:
+        ai_response = await ai_service.get_response(request.message, session.id)
         
-        return response
+        # Save AI response
+        assistant_message = ChatMessage(
+            session_id=session.id,
+            role="assistant",
+            content=ai_response
+        )
+        db.add(assistant_message)
+        db.commit()
         
-    except HTTPException:
-        raise
+        return ChatResponse(
+            message=ai_response,
+            session_id=session.id,
+            message_id=assistant_message.id
+        )
     except Exception as e:
-        logger.error(f"Error in chat endpoint: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
 
+@router.get("/sessions", response_model=List[ChatSessionResponse])
+async def get_chat_sessions(
+    db: Session = Depends(get_db)
+):
+    """Get all chat sessions (simplified without user authentication)"""
+    sessions = db.query(ChatSession).filter(
+        ChatSession.is_active == True
+    ).order_by(ChatSession.updated_at.desc()).all()
+    
+    return sessions
 
-@router.get("/session/{session_id}")
-async def get_session_info(session_id: str):
-    """
-    Get session information
-    """
+@router.get("/sessions/{session_id}/messages", response_model=List[ChatMessageResponse])
+async def get_session_messages(
+    session_id: int,
+    db: Session = Depends(get_db)
+):
+    """Get all messages in a specific chat session (simplified without user authentication)"""
+    session = db.query(ChatSession).filter(
+        ChatSession.id == session_id
+    ).first()
+    
+    if not session:
+        raise HTTPException(status_code=404, detail="Chat session not found")
+    
+    messages = db.query(ChatMessage).filter(
+        ChatMessage.session_id == session_id
+    ).order_by(ChatMessage.timestamp).all()
+    
+    return messages
+
+@router.delete("/sessions/{session_id}")
+async def delete_chat_session(
+    session_id: int,
+    db: Session = Depends(get_db)
+):
+    """Delete a chat session (simplified without user authentication)"""
+    session = db.query(ChatSession).filter(
+        ChatSession.id == session_id
+    ).first()
+    
+    if not session:
+        raise HTTPException(status_code=404, detail="Chat session not found")
+    
+    session.is_active = False
+    db.commit()
+    
+    return {"message": "Chat session deleted successfully"}
+
+@router.post("/init-knowledge-base")
+async def initialize_knowledge_base():
+    """Initialize the knowledge base with reference data"""
     try:
-        session_info = orchestrator.get_session_info(session_id)
-        if not session_info:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Session not found"
-            )
+        # Load knowledge base from local data folder
+        knowledge_base_path = "./data/adcvd_faq.json"
+        loaded_count = await ai_service.vector_store.load_knowledge_base(knowledge_base_path)
         
         return {
-            "success": True,
-            "session_id": session_id,
-            "info": session_info
+            "message": f"Knowledge base initialized successfully",
+            "documents_loaded": loaded_count,
+            "status": "success"
         }
-        
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Error getting session info: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to initialize knowledge base: {str(e)}")
 
-
-@router.delete("/session/{session_id}")
-async def clear_session(session_id: str):
-    """
-    Clear a chat session
-    """
+@router.get("/knowledge-stats")
+async def get_knowledge_stats():
+    """Get knowledge base statistics"""
     try:
-        success = orchestrator.clear_session(session_id)
-        if not success:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Session not found"
-            )
-        
-        return {
-            "success": True,
-            "message": "Session cleared successfully"
-        }
-        
-    except HTTPException:
-        raise
+        stats = await ai_service.vector_store.get_collection_stats()
+        return stats
     except Exception as e:
-        logger.error(f"Error clearing session: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get knowledge stats: {str(e)}")
 
-
-@router.get("/health")
-async def chat_health_check():
-    """
-    Health check for chat service
-    """
+@router.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int, db: Session = Depends(get_db)):
+    """WebSocket endpoint for real-time chat"""
+    await websocket.accept()
+    
     try:
-        # Basic health check
-        return {
-            "success": True,
-            "service": "chat",
-            "status": "healthy",
-            "orchestrator_initialized": True
-        }
-        
+        while True:
+            # Receive message from client
+            data = await websocket.receive_text()
+            message_data = json.loads(data)
+            
+            # Process message and get AI response
+            ai_response = await ai_service.get_response(message_data["message"])
+            
+            # Send response back to client
+            await websocket.send_text(json.dumps({
+                "message": ai_response,
+                "timestamp": str(datetime.utcnow())
+            }))
+    except WebSocketDisconnect:
+        print(f"Client {user_id} disconnected")
     except Exception as e:
-        logger.error(f"Error in health check: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Service unhealthy"
-        ) 
+        await websocket.send_text(json.dumps({
+            "error": str(e)
+        })) 
