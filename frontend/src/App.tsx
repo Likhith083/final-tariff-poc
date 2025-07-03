@@ -4,6 +4,7 @@ import { Search, MessageCircle, BarChart3, Menu, X } from 'lucide-react';
 import './App.css';
 import QuickLinks from './components/QuickLinks';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import StatusIndicator from './components/StatusIndicator';
 
 // Components
 import Hero from './components/Hero';
@@ -22,7 +23,8 @@ function Navigation({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; set
   const location = useLocation();
 
   const navigationItems = [
-    { id: 'hero', label: 'Home', icon: <Search />, path: '/' },
+    // Remove the Home button
+    // { id: 'hero', label: 'Home', icon: <Search />, path: '/' },
     { id: 'hts', label: 'HTS Lookup', icon: <Search />, path: '/hts' },
     { id: 'chat', label: 'AI Chat', icon: <MessageCircle />, path: '/chat' },
     { id: 'calculator', label: 'Calculator', icon: <BarChart3 />, path: '/calculator' },
@@ -47,16 +49,21 @@ function Navigation({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; set
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="nav-content">
-          <motion.div 
-            className="logo"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/')}
-            style={{ cursor: 'pointer' }}
-          >
-            🚢 TariffAI
-          </motion.div>
+        <div className="nav-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+            <div style={{ minWidth: 120, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+              <StatusIndicator />
+            </div>
+            <motion.div 
+              className="logo"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/')}
+              style={{ cursor: 'pointer', marginLeft: 32 }}
+            >
+              🚢 TariffAI
+            </motion.div>
+          </div>
           
           <div className="nav-links">
             {navigationItems.map((item) => (
