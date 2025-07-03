@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Sparkles, Copy, ThumbsUp, ThumbsDown } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 interface Message {
   id: string;
@@ -22,6 +23,12 @@ const ChatInterface: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [kbText, setKbText] = useState("");
+  const [kbTextUploading, setKbTextUploading] = useState(false);
+  const [kbTextMessage, setKbTextMessage] = useState("");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -101,6 +108,61 @@ const ChatInterface: React.FC = () => {
     navigator.clipboard.writeText(content);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => { setSelectedFile(e.target.files?.[0] || null); };
+
+  const handleUploadKnowledgeClick = async () => {
+    if (!selectedFile) return;
+    setUploading(true);
+    setUploadMessage("");
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/chat/upload-knowledge', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok) setUploadMessage('Knowledge uploaded successfully!');
+      else setUploadMessage(data.detail || 'Upload failed.');
+    } catch (err) { setUploadMessage('Upload failed.'); }
+    setUploading(false);
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    let y = 10;
+    doc.setFontSize(16);
+    doc.text('Tariff AI Chat Session', 10, y);
+    y += 10;
+    doc.setFontSize(12);
+    messages.forEach((msg, idx) => {
+      const prefix = msg.type === 'user' ? 'User: ' : 'AI: ';
+      const lines = doc.splitTextToSize(prefix + msg.content, 180) as string[];
+      lines.forEach((line: string) => {
+        if (y > 270) { doc.addPage(); y = 10; }
+        doc.text(line, 10, y);
+        y += 7;
+      });
+      y += 3;
+    });
+    doc.save('tariff-ai-chat.pdf');
+  };
+
+  const handleKbTextUpload = async () => {
+    if (!kbText.trim()) return;
+    setKbTextUploading(true);
+    setKbTextMessage("");
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/chat/upload-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: kbText })
+      });
+      const data = await res.json();
+      if (res.ok) setKbTextMessage('Text added to knowledge base!');
+      else setKbTextMessage(data.detail || 'Upload failed.');
+    } catch (err) { setKbTextMessage('Upload failed.'); }
+    setKbTextUploading(false);
+    setKbText("");
+  };
+
   return (
     <div className="chat-interface">
       <motion.div
@@ -124,6 +186,11 @@ const ChatInterface: React.FC = () => {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <div className="glass-card chat-card">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '1rem' }}>
+            <button className="glass-button primary" onClick={handleExportPDF}>
+              Export
+            </button>
+          </div>
           <div className="messages-container">
             <AnimatePresence>
               {messages.map((message, index) => (
@@ -262,41 +329,44 @@ const ChatInterface: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Quick Actions */}
-      <motion.div
-        className="quick-actions"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <div className="glass-card">
-          <h3>
-            <Sparkles size={20} />
-            Quick Actions
-          </h3>
-          <div className="quick-buttons">
-            {[
-              'Find HTS code for nitrile gloves',
-              'Calculate tariff for cotton t-shirts',
-              'Material composition analysis',
-              'Alternative sourcing suggestions'
-            ].map((action, index) => (
-              <motion.button
-                key={action}
-                className="quick-button"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setInputMessage(action)}
-              >
-                {action}
-              </motion.button>
-            ))}
-          </div>
+      <div style={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        gap: '2rem',
+        marginTop: '2.5rem',
+        flexWrap: 'wrap',
+      }}>
+        {/* Upload File Card */}
+        <div className="glass-card" style={{ width: 400, minHeight: 260, flex: 'none', marginBottom: '1.5rem' }}>
+          <h3 style={{ fontWeight: 700, fontSize: '1.2rem', color: '#22223b', marginBottom: '1rem' }}>Upload File to Knowledge Base</h3>
+          <label className="glass-input" style={{ display: 'block', padding: '0.75rem 1rem', cursor: 'pointer', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', color: '#fff', fontWeight: 500, marginBottom: '1rem', textAlign: 'center' }}>
+            <input type="file" accept=".pdf,.txt,.md,.doc,.docx" onChange={handleFileChange} style={{ display: 'none' }} />
+            {selectedFile ? selectedFile.name : 'Choose File'}
+          </label>
+          <button type="button" className="glass-button primary" onClick={handleUploadKnowledgeClick} disabled={uploading || !selectedFile} style={{ width: '100%', marginBottom: '0.5rem' }}>
+            {uploading ? 'Uploading...' : 'Upload to Knowledge Base'}
+          </button>
+          {uploadMessage && <div style={{ color: '#4ecdc4', fontWeight: 500, marginTop: '0.5rem' }}>{uploadMessage}</div>}
         </div>
-      </motion.div>
+        {/* Add Text Card */}
+        <div className="glass-card" style={{ width: 400, minHeight: 260, flex: 'none', marginBottom: '1.5rem' }}>
+          <h3 style={{ fontWeight: 700, fontSize: '1.2rem', color: '#22223b', marginBottom: '1rem' }}>Add Text to Knowledge Base</h3>
+          <textarea
+            className="glass-input"
+            style={{ minWidth: '100%', minHeight: '64px', background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '0.75rem 1rem', fontSize: '1rem', marginBottom: '1rem' }}
+            placeholder="Paste or type text to add to the knowledge base..."
+            value={kbText}
+            onChange={e => setKbText(e.target.value)}
+            disabled={kbTextUploading}
+          />
+          <button type="button" className="glass-button primary" onClick={handleKbTextUpload} disabled={kbTextUploading || !kbText.trim()} style={{ width: '100%', marginBottom: '0.5rem' }}>
+            {kbTextUploading ? 'Uploading...' : 'Add Text to Knowledge Base'}
+          </button>
+          {kbTextMessage && <div style={{ color: '#4ecdc4', fontWeight: 500, marginTop: '0.5rem' }}>{kbTextMessage}</div>}
+        </div>
+      </div>
     </div>
   );
 };

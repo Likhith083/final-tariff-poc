@@ -17,4 +17,6 @@ python-socketio==5.11.1
 redis==5.2.1
 celery==5.4.0
 pytest==8.3.4
-pytest-asyncio==0.24.0 
+pytest-asyncio==0.24.0
+pdfplumber
+python-docx 

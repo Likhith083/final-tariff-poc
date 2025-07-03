@@ -198,9 +198,25 @@ const HTSSearch: React.FC = () => {
   return (
     <div className="hts-search-container">
       {/* Header */}
-      <div className="search-header">
-        <h1>HTS Code Search</h1>
-        <p>Find Harmonized Tariff Schedule codes with intelligent search and autocomplete</p>
+      <div className="search-header" style={{ marginBottom: '2.5rem' }}>
+        <h1 style={{
+          fontFamily: 'Inter, Segoe UI, Roboto, Arial, sans-serif',
+          fontWeight: 900,
+          fontSize: '2.8rem',
+          color: '#22223b',
+          letterSpacing: '-1px',
+          marginBottom: '0.5rem',
+          textShadow: '0 2px 8px rgba(0,0,0,0.04)'
+        }}>HTS Code Search</h1>
+        <p style={{
+          fontFamily: 'Inter, Segoe UI, Roboto, Arial, sans-serif',
+          fontWeight: 500,
+          fontSize: '1.25rem',
+          color: '#444',
+          marginBottom: 0
+        }}>
+          Find Harmonized Tariff Schedule codes with intelligent search and autocomplete
+        </p>
       </div>
 
       {/* Search Input */}
@@ -331,12 +347,15 @@ const HTSSearch: React.FC = () => {
             {results.length > 0 && (
               <div className="export-controls">
                 <div className="select-controls">
-                  <button
+                  <a
                     className="select-all-btn"
+                    style={{ color: '#4ecdc4', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer', opacity: 1 }}
+                    onMouseOver={e => (e.currentTarget.style.color = '#222')}
+                    onMouseOut={e => (e.currentTarget.style.color = '#4ecdc4')}
                     onClick={handleSelectAll}
                   >
                     {selected.size === results.length ? 'Deselect All' : 'Select All'}
-                  </button>
+                  </a>
                   {selected.size > 0 && (
                     <span className="selected-count">
                       {selected.size} selected
@@ -413,7 +432,7 @@ const HTSSearch: React.FC = () => {
                         onClick={() => navigator.clipboard.writeText(result.hts_code)}
                         title="Copy HTS Code"
                       >
-                        <FileText size={14} />
+                        <FileText size={14} style={{ color: '#4ecdc4', opacity: 0.95, fontSize: '1.2rem', cursor: 'pointer' }} />
                       </button>
                     </td>
                   </motion.tr>
@@ -432,6 +451,18 @@ const HTSSearch: React.FC = () => {
           <p>Try searching with different keywords or check your spelling</p>
         </div>
       )}
+
+      <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
+        <a
+          href="https://www.cartage.ai/tools/hts-code-lookup"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="glass-button primary"
+          style={{ fontWeight: 700, fontSize: '1.1rem', padding: '1rem 2.5rem', background: 'linear-gradient(135deg, #4ecdc4 0%, #667eea 100%)', color: '#fff', border: 'none', borderRadius: '16px', boxShadow: '0 4px 24px rgba(76, 205, 196, 0.15)' }}
+        >
+          Open Cartage AI HTS Lookup
+        </a>
+      </div>
     </div>
   );
 };

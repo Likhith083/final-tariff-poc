@@ -152,4 +152,19 @@ class VectorStoreService:
             return True
         except Exception as e:
             print(f"Failed to clear collection: {str(e)}")
-            return False 
+            return False
+    
+    async def load_knowledge_base_folder(self, folder_path: str) -> int:
+        """Load all JSON knowledge base files from a folder"""
+        if not os.path.exists(folder_path):
+            raise FileNotFoundError(f"Knowledge base folder not found: {folder_path}")
+        total_loaded = 0
+        for fname in os.listdir(folder_path):
+            if fname.endswith('.json'):
+                fpath = os.path.join(folder_path, fname)
+                try:
+                    loaded = await self.load_knowledge_base(fpath)
+                    total_loaded += loaded
+                except Exception as e:
+                    print(f"Failed to load {fname}: {e}")
+        return total_loaded 
