@@ -2,61 +2,50 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import List, Optional
-
+import pandas as pd
+import os
+from pydantic import BaseModel
 from app.core.database import get_db
 from app.models.hts import HTSRecord
-from app.schemas.hts import HTSSearchRequest, HTSSearchResponse, HTSRecordResponse
+from app.schemas.hts import HTSSearchRequest, HTSSearchResponse, HTSRecordResponse, HTSSuggestionResponse
 from app.services.hts_service import HTSService
+from loguru import logger
 
 router = APIRouter()
 hts_service = HTSService()
+
+@router.on_event("startup")
+async def startup_event():
+    """Initialize HTS service on startup"""
+    try:
+        await hts_service.initialize()
+        logger.info("HTS service initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize HTS service: {e}")
 
 @router.get("/search", response_model=HTSSearchResponse)
 async def search_hts_codes(
     query: str = Query(..., description="Search query for HTS codes or descriptions"),
     limit: int = Query(10, description="Maximum number of results to return"),
-    db: Session = Depends(get_db)
 ):
-    """Search for HTS codes by code or description (case-insensitive, ignore periods)"""
-    
+    """Search for HTS codes by code or description (vector + substring search)"""
     if not query.strip():
         raise HTTPException(status_code=400, detail="Search query cannot be empty")
 
-    # Normalize query for code search (remove periods)
-    normalized_query = query.replace('.', '').lower()
-
-    # Search in database (case-insensitive, ignore periods in code)
-    results = db.query(HTSRecord).filter(
-        or_(
-            HTSRecord.hts_code.ilike(f"%{query}%"),
-            HTSRecord.hts_code.ilike(f"%{normalized_query}%"),
-            HTSRecord.description.ilike(f"%{query}%"),
-            HTSRecord.category.ilike(f"%{query}%")
+    try:
+        results = await hts_service.search_hts_codes(query, limit)
+        
+        return HTSSearchResponse(
+            success=True,
+            message=f"Found {len(results)} HTS codes",
+            query=query,
+            results=results,
+            total_results=len(results)
         )
-    ).limit(limit).all()
-    
-    # If no results in database, try AI-powered search
-    if not results:
-        try:
-            ai_results = await hts_service.ai_search(query, limit)
-            return HTSSearchResponse(
-                results=ai_results,
-                total_count=len(ai_results),
-                query=query
-            )
-        except Exception as e:
-            # Return empty results if AI search fails
-            return HTSSearchResponse(
-                results=[],
-                total_count=0,
-                query=query
-            )
-    
-    return HTSSearchResponse(
-        results=results,
-        total_count=len(results),
-        query=query
-    )
+        
+    except Exception as e:
+        logger.error(f"HTS search error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/code/{hts_code}", response_model=HTSRecordResponse)
 async def get_hts_code(
@@ -80,30 +69,28 @@ async def get_hts_code(
     
     return record
 
-@router.get("/suggestions", response_model=List[str])
+@router.get("/suggestions", response_model=HTSSuggestionResponse)
 async def get_hts_suggestions(
-    query: str = Query(..., description="Partial HTS code or description for suggestions"),
-    limit: int = Query(5, description="Maximum number of suggestions"),
-    db: Session = Depends(get_db)
+    query: str = Query(..., description="Partial query for suggestions"),
+    limit: int = Query(5, description="Maximum number of suggestions")
 ):
     """Get HTS code suggestions for autocomplete"""
-    
-    if len(query.strip()) < 2:
-        raise HTTPException(status_code=400, detail="Query must be at least 2 characters")
-    
-    # Get suggestions from database
-    suggestions = db.query(HTSRecord.hts_code).filter(
-        HTSRecord.hts_code.startswith(query)
-    ).limit(limit).all()
-    
-    # If not enough suggestions, add description-based ones
-    if len(suggestions) < limit:
-        desc_suggestions = db.query(HTSRecord.hts_code).filter(
-            HTSRecord.description.contains(query)
-        ).limit(limit - len(suggestions)).all()
-        suggestions.extend(desc_suggestions)
-    
-    return [s[0] for s in suggestions]
+    if not query.strip():
+        raise HTTPException(status_code=400, detail="Query cannot be empty")
+
+    try:
+        suggestions = await hts_service.get_suggestions(query, limit)
+        
+        return HTSSuggestionResponse(
+            success=True,
+            message=f"Found {len(suggestions)} suggestions",
+            query=query,
+            suggestions=suggestions
+        )
+        
+    except Exception as e:
+        logger.error(f"HTS suggestions error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/categories", response_model=List[str])
 async def get_hts_categories(
@@ -143,17 +130,37 @@ async def import_hts_data(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
 
-@router.get("/stats")
-async def get_hts_stats(
-    db: Session = Depends(get_db)
-):
-    """Get HTS database statistics"""
-    
-    total_records = db.query(HTSRecord).count()
-    total_categories = db.query(HTSRecord.category).distinct().count()
-    
-    return {
-        "total_records": total_records,
-        "total_categories": total_categories,
-        "last_updated": "2025-01-01"  # This would be dynamic in production
-    } 
+@router.get("/statistics")
+async def get_hts_statistics():
+    """Get HTS code statistics"""
+    try:
+        stats = await hts_service.get_statistics()
+        
+        return {
+            "success": True,
+            "message": "Statistics retrieved successfully",
+            "data": stats
+        }
+        
+    except Exception as e:
+        logger.error(f"Get statistics error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/health")
+async def hts_health():
+    """Health check for HTS service"""
+    try:
+        stats = await hts_service.get_statistics()
+        return {
+            "status": "healthy",
+            "service": "hts",
+            "total_codes": stats.get("total_hts_codes", 0),
+            "vector_documents": stats.get("vector_store_documents", 0)
+        }
+    except Exception as e:
+        logger.error(f"HTS health check failed: {e}")
+        return {
+            "status": "unhealthy",
+            "service": "hts",
+            "error": str(e)
+        } 

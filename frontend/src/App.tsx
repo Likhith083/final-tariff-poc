@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MessageCircle, BarChart3, Settings, Menu, X } from 'lucide-react';
+import { Search, MessageCircle, BarChart3, Menu, X } from 'lucide-react';
 import './App.css';
 import QuickLinks from './components/QuickLinks';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 // Components
 import Hero from './components/Hero';
@@ -16,8 +16,115 @@ import MaterialAnalyzer from './components/MaterialAnalyzer';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorPage from './components/ErrorPage';
 
+// Navigation component that uses router hooks
+function Navigation({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (open: boolean) => void }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navigationItems = [
+    { id: 'hero', label: 'Home', icon: <Search />, path: '/' },
+    { id: 'hts', label: 'HTS Lookup', icon: <Search />, path: '/hts' },
+    { id: 'chat', label: 'AI Chat', icon: <MessageCircle />, path: '/chat' },
+    { id: 'calculator', label: 'Calculator', icon: <BarChart3 />, path: '/calculator' },
+    { id: 'scenario', label: 'Scenarios', icon: <BarChart3 />, path: '/scenario' },
+    { id: 'analyzer', label: 'Materials', icon: <BarChart3 />, path: '/analyzer' },
+    { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 />, path: '/dashboard' },
+  ];
+
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname === path;
+  };
+
+  return (
+    <>
+      {/* Glass Navigation */}
+      <motion.nav 
+        className="glass-nav"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="nav-content">
+          <motion.div 
+            className="logo"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer' }}
+          >
+            🚢 TariffAI
+          </motion.div>
+          
+          <div className="nav-links">
+            {navigationItems.map((item) => (
+              <motion.button
+                key={item.id}
+                className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
+                onClick={() => navigate(item.path)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </motion.button>
+            ))}
+          </div>
+
+          <motion.button
+            className="menu-toggle"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            {sidebarOpen ? <X /> : <Menu />}
+          </motion.button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            className="mobile-sidebar"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          >
+            <div className="sidebar-content">
+              {navigationItems.map((item) => (
+                <motion.button
+                  key={item.id}
+                  className={`sidebar-link ${isActive(item.path) ? 'active' : ''}`}
+                  onClick={() => {
+                    navigate(item.path);
+                    setSidebarOpen(false);
+                  }}
+                  whileHover={{ x: 10 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+// Navigation wrapper for Hero component
+function HeroWrapper() {
+  const navigate = useNavigate();
+  return <Hero onNavigate={(path: string) => navigate(path)} />;
+}
+
 function App() {
-  const [currentView, setCurrentView] = useState<'hero' | 'hts' | 'chat' | 'dashboard' | 'calculator' | 'scenario' | 'analyzer' | 'cartage'>('hero');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [backendError, setBackendError] = useState(false);
@@ -74,16 +181,6 @@ function App() {
     }, 1000);
   };
 
-  const navigationItems = [
-    { id: 'hero', label: 'Home', icon: <Search /> },
-    { id: 'hts', label: 'HTS Lookup', icon: <Search /> },
-    { id: 'chat', label: 'AI Chat', icon: <MessageCircle /> },
-    { id: 'calculator', label: 'Calculator', icon: <BarChart3 /> },
-    { id: 'scenario', label: 'Scenarios', icon: <BarChart3 /> },
-    { id: 'analyzer', label: 'Materials', icon: <BarChart3 /> },
-    { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 /> },
-  ];
-
   // Show loading spinner while checking backend
   if (isLoading) {
     return (
@@ -119,83 +216,12 @@ function App() {
           <div className="gradient-orb orb-3"></div>
         </div>
 
-        {/* Glass Navigation */}
-        <motion.nav 
-          className="glass-nav"
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <div className="nav-content">
-            <motion.div 
-              className="logo"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              🚢 TariffAI
-            </motion.div>
-            
-            <div className="nav-links">
-              {navigationItems.map((item) => (
-                <motion.button
-                  key={item.id}
-                  className={`nav-link ${currentView === item.id ? 'active' : ''}`}
-                  onClick={() => setCurrentView(item.id as any)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </motion.button>
-              ))}
-            </div>
-
-            <motion.button
-              className="menu-toggle"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              {sidebarOpen ? <X /> : <Menu />}
-            </motion.button>
-          </div>
-        </motion.nav>
-
-        {/* Mobile Sidebar */}
-        <AnimatePresence>
-          {sidebarOpen && (
-            <motion.div
-              className="mobile-sidebar"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            >
-              <div className="sidebar-content">
-                {navigationItems.map((item) => (
-                  <motion.button
-                    key={item.id}
-                    className={`sidebar-link ${currentView === item.id ? 'active' : ''}`}
-                    onClick={() => {
-                      setCurrentView(item.id as any);
-                      setSidebarOpen(false);
-                    }}
-                    whileHover={{ x: 10 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <Navigation sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         {/* Main Content */}
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<><Hero onNavigate={setCurrentView} /> <QuickLinks /></>} />
+            <Route path="/" element={<><HeroWrapper /> <QuickLinks /></>} />
             <Route path="/hts" element={<HTSSearch />} />
             <Route path="/chat" element={<ChatInterface />} />
             <Route path="/calculator" element={<TariffCalculator />} />

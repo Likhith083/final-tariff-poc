@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, MessageCircle, BarChart3, ArrowRight, Sparkles } from 'lucide-react';
 
 interface HeroProps {
-  onNavigate: (view: 'hero' | 'hts' | 'chat' | 'dashboard') => void;
+  onNavigate: (view: string) => void;
 }
 
 const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
@@ -12,19 +12,19 @@ const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
       icon: <Search />,
       title: 'HTS Lookup',
       description: 'Intelligent search with AI-powered suggestions',
-      action: () => onNavigate('hts')
+      action: () => onNavigate('/hts')
     },
     {
       icon: <MessageCircle />,
       title: 'AI Chat',
       description: 'Conversational tariff assistance',
-      action: () => onNavigate('chat')
+      action: () => onNavigate('/chat')
     },
     {
       icon: <BarChart3 />,
       title: 'Analytics',
       description: 'Comprehensive tariff insights',
-      action: () => onNavigate('dashboard')
+      action: () => onNavigate('/dashboard')
     }
   ];
 
@@ -76,7 +76,7 @@ const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
         >
           <motion.button
             className="glass-button primary"
-            onClick={() => onNavigate('hts')}
+            onClick={() => onNavigate('/hts')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -86,7 +86,7 @@ const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
           
           <motion.button
             className="glass-button secondary"
-            onClick={() => onNavigate('chat')}
+            onClick={() => onNavigate('/chat')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
