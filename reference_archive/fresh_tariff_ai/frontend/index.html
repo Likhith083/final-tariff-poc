@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TariffAI - Intelligent HTS & Tariff Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-animation">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-globe-americas"></i>
+                <span>TariffAI</span>
+            </div>
+            <div class="header-controls">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode">
+                    <i class="fas fa-sun" id="themeIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="container">
+            <div class="status-left">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">Connecting...</span>
+            </div>
+            <div class="status-right">
+                <span class="version">v1.0.0</span>
+                <div class="connection-status">
+                    <i class="fas fa-wifi" id="connectionIcon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="home">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </button>
+                <button class="tab-btn" data-tab="chat">
+                    <i class="fas fa-comments"></i>
+                    <span>AI Chat</span>
+                </button>
+                <button class="tab-btn" data-tab="hts-lookup">
+                    <i class="fas fa-search"></i>
+                    <span>HTS Lookup</span>
+                </button>
+                <button class="tab-btn" data-tab="tariff-calc">
+                    <i class="fas fa-calculator"></i>
+                    <span>Tariff Calculator</span>
+                </button>
+                <button class="tab-btn" data-tab="risk-assessment">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Risk Assessment</span>
+                </button>
+                <button class="tab-btn" data-tab="scenario-analysis">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Scenario Analysis</span>
+                </button>
+                <button class="tab-btn" data-tab="data-ingestion">
+                    <i class="fas fa-database"></i>
+                    <span>Data Ingestion</span>
+                </button>
+                <button class="tab-btn" data-tab="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Homepage Tab -->
+                <div class="tab-pane active" id="home-tab">
+                    <div class="homepage-section">
+                        <div class="hero-section">
+                            <div class="hero-content">
+                                <h1 class="hero-title">
+                                    <i class="fas fa-globe-americas"></i>
+                                    Welcome to TariffAI
+                                </h1>
+                                <p class="hero-subtitle">Intelligent HTS & Tariff Management Platform</p>
+                                <div class="hero-description">
+                                    <p>Your comprehensive solution for navigating complex international trade regulations, 
+                                    calculating import duties, and making informed trade decisions.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="features-overview">
+                            <h2><i class="fas fa-star"></i> Key Features</h2>
+                            <div class="features-grid">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <h3>AI-Powered Chat</h3>
+                                    <p>Get instant answers about tariffs, HTS codes, and trade regulations using our intelligent AI assistant.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <h3>Advanced HTS Lookup</h3>
+                                    <p>Search through comprehensive tariff databases with advanced filtering and sorting capabilities.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-calculator"></i>
+                                    </div>
+                                    <h3>Tariff Calculator</h3>
+                                    <p>Calculate import duties, taxes, and total landed costs with precision and detailed breakdowns.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <h3>Risk Assessment</h3>
+                                    <p>Evaluate compliance risks, restrictions, and requirements for your import/export operations.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <h3>Scenario Analysis</h3>
+                                    <p>Compare different trade scenarios and optimize your supply chain decisions.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <h3>Analytics Dashboard</h3>
+                                    <p>Visualize trade data, trends, and insights with interactive charts and reports.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quick-start-section">
+                            <h2><i class="fas fa-rocket"></i> Quick Start</h2>
+                            <div class="quick-start-cards">
+                                <div class="quick-start-card">
+                                    <h3>1. Search HTS Codes</h3>
+                                    <p>Use the HTS Lookup tab to find the correct tariff classification for your products.</p>
+                                    <button class="btn btn-primary" onclick="tariffAI.switchTab('hts-lookup')">
+                                        <i class="fas fa-search"></i> Start Searching
+                                    </button>
+                                </div>
+                                <div class="quick-start-card">
+                                    <h3>2. Calculate Duties</h3>
+                                    <p>Enter your product details to calculate accurate import duties and costs.</p>
+                                    <button class="btn btn-primary" onclick="tariffAI.switchTab('tariff-calc')">
+                                        <i class="fas fa-calculator"></i> Calculate Now
+                                    </button>
+                                </div>
+                                <div class="quick-start-card">
+                                    <h3>3. Ask AI Assistant</h3>
+                                    <p>Get expert guidance on trade regulations and compliance requirements.</p>
+                                    <button class="btn btn-primary" onclick="tariffAI.switchTab('chat')">
+                                        <i class="fas fa-comments"></i> Chat with AI
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quick-links-section">
+                            <h2><i class="fas fa-external-link-alt"></i> Quick Links & Resources</h2>
+                            <p class="section-note">*Note: These links will be replaced with scraped data in future updates</p>
+                            
+                            <div class="quick-links-grid">
+                                <div class="quick-links-category">
+                                    <h3><i class="fas fa-building"></i> Official Government Sources</h3>
+                                    <div class="links-list">
+                                        <a href="https://www.usitc.gov/harmonized_tariff_information" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>USITC Harmonized Tariff Information</span>
+                                        </a>
+                                        <a href="https://www.cbp.gov/trade/priority-issues/adcvd/antidumping-and-countervailing-duties-adcvd-frequently-asked-questions" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>CBP AD/CVD Frequently Asked Questions</span>
+                                        </a>
+                                        <a href="https://hts.usitc.gov/" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>USITC HTS Online Database</span>
+                                        </a>
+                                        <a href="https://dataweb.usitc.gov/" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>USITC DataWeb - Trade Statistics</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="quick-links-category">
+                                    <h3><i class="fas fa-globe"></i> International Trade Organizations</h3>
+                                    <div class="links-list">
+                                        <a href="https://hstracker.wto.org/?_inputs_&page=%22glance%22&sidebarCollapsed=false" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>WTO HS Tracker - HS at a Glance</span>
+                                        </a>
+                                        <a href="https://hstracker.wto.org/?_inputs_&page=%22visualizer%22&sidebarCollapsed=false&hscode=%22%22" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>WTO HS Tracker - Subheading Visualizer</span>
+                                        </a>
+                                        <a href="https://www.wto.org/english/tratop_e/tariffs_e/tariff_data_e.htm" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>WTO Tariff Data Portal</span>
+                                        </a>
+                                        <a href="https://comtrade.un.org/data/" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>UN Comtrade Database</span>
+                                        </a>
+                                        <a href="http://www.wcoomd.org/en/topics/nomenclature/instrument-and-tools/hs-nomenclature-2022-edition.aspx" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>WCO HS Nomenclature 2022</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="quick-links-category">
+                                    <h3><i class="fas fa-database"></i> Open Data Sources</h3>
+                                    <div class="links-list">
+                                        <a href="https://catalog.data.gov/dataset?q=harmonized+tariff+schedule" target="_blank" class="quick-link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>Data.gov HTS Datasets</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Chat Tab -->
+                <div class="tab-pane" id="chat-tab">
+                    <div class="chat-section">
+                        <div class="chat-header">
+                            <h2><i class="fas fa-robot"></i> AI Assistant</h2>
+                            <div class="chat-controls">
+                                <button class="btn btn-glass" id="clearChat">
+                                    <i class="fas fa-trash"></i> Clear
+                                </button>
+                                <button class="btn btn-glass" id="exportChat">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message system">
+                                <div class="message-content">
+                                    <i class="fas fa-info-circle"></i>
+                                    Welcome to TariffAI! I can help you with:
+                                    <ul>
+                                        <li>Finding HTS codes for products</li>
+                                        <li>Calculating import duties and costs</li>
+                                        <li>Risk assessment and compliance</li>
+                                        <li>Alternative sourcing analysis</li>
+                                    </ul>
+                                    <p>Try asking: "What's the HTS code for steel pipes?" or "Calculate duty for $1000 worth of electronics from China"</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input">
+                            <div class="input-group">
+                                <input type="text" id="messageInput" placeholder="Ask me about tariffs, HTS codes, or trade..." />
+                                <button class="btn btn-primary" id="sendMessage">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            <div class="quick-actions">
+                                <button class="quick-btn" data-query="What's the HTS code for steel pipes?">
+                                    <i class="fas fa-search"></i> Steel Pipes
+                                </button>
+                                <button class="quick-btn" data-query="Calculate duty for $1000 electronics from China">
+                                    <i class="fas fa-calculator"></i> Duty Calc
+                                </button>
+                                <button class="quick-btn" data-query="Risk assessment for HTS 7304.41.00">
+                                    <i class="fas fa-shield-alt"></i> Risk Check
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HTS Lookup Tab -->
+                <div class="tab-pane" id="hts-lookup-tab">
+                    <div class="feature-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-search"></i> HTS Code Lookup</h2>
+                            <p>Fast, direct search through tariff database with advanced filtering</p>
+                        </div>
+                        
+                        <div class="search-container">
+                            <div class="search-box">
+                                <input type="text" id="htsSearchInput" placeholder="Enter product description or HTS code..." />
+                                <button class="btn btn-primary" id="htsSearchBtn">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                                <button class="btn btn-glass" id="advancedSearchBtn">
+                                    <i class="fas fa-sliders-h"></i> Advanced
+                                </button>
+                            </div>
+                            
+                            <div class="search-filters" id="advancedFilters" style="display: none;">
+                                <div class="filter-row">
+                                    <select id="categoryFilter">
+                                        <option value="">All Categories</option>
+                                        <option value="textiles">Textiles</option>
+                                        <option value="electronics">Electronics</option>
+                                        <option value="machinery">Machinery</option>
+                                        <option value="chemicals">Chemicals</option>
+                                        <option value="steel">Steel & Metals</option>
+                                        <option value="agriculture">Agriculture</option>
+                                    </select>
+                                    <select id="rateFilter">
+                                        <option value="">All Rates</option>
+                                        <option value="0">Duty Free</option>
+                                        <option value="low">Low Rate (0-5%)</option>
+                                        <option value="medium">Medium Rate (5-15%)</option>
+                                        <option value="high">High Rate (15%+)</option>
+                                    </select>
+                                    <select id="sortBy">
+                                        <option value="relevance">Sort by Relevance</option>
+                                        <option value="hts_code">Sort by HTS Code</option>
+                                        <option value="duty_rate">Sort by Duty Rate</option>
+                                        <option value="description">Sort by Description</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-controls">
+                            <div class="table-info">
+                                <span id="resultCount">0 results</span>
+                                <span id="pageInfo">Page 1 of 1</span>
+                            </div>
+                            <div class="table-actions">
+                                <button class="btn btn-glass btn-sm" id="exportTable">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                                <button class="btn btn-glass btn-sm" id="selectAll">
+                                    <i class="fas fa-check-square"></i> Select All
+                                </button>
+                                <button class="btn btn-glass btn-sm" id="clearSelection">
+                                    <i class="fas fa-square"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="results-container" id="htsResults">
+                            <div class="table-wrapper">
+                                <table class="data-table" id="htsTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="select-col">
+                                                <input type="checkbox" id="selectAllCheckbox">
+                                            </th>
+                                            <th class="sortable" data-sort="hts_code">
+                                                HTS Code <i class="fas fa-sort"></i>
+                                            </th>
+                                            <th class="sortable" data-sort="description">
+                                                Description <i class="fas fa-sort"></i>
+                                            </th>
+                                            <th class="sortable" data-sort="duty_rate">
+                                                Duty Rate <i class="fas fa-sort"></i>
+                                            </th>
+                                            <th class="sortable" data-sort="category">
+                                                Category <i class="fas fa-sort"></i>
+                                            </th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="htsTableBody">
+                                        <!-- Results will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="pagination" id="pagination">
+                                <button class="btn btn-glass btn-sm" id="prevPage" disabled>
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </button>
+                                <div class="page-numbers" id="pageNumbers">
+                                    <!-- Page numbers will be generated here -->
+                                </div>
+                                <button class="btn btn-glass btn-sm" id="nextPage">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tariff Calculator Tab -->
+                <div class="tab-pane" id="tariff-calc-tab">
+                    <div class="feature-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-calculator"></i> Tariff Calculator</h2>
+                            <p>Calculate import duties and total landed costs</p>
+                        </div>
+                        
+                        <div class="calculator-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>HTS Code</label>
+                                    <input type="text" id="calcHtsCode" placeholder="e.g., 7304.41.00" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Product Value (USD)</label>
+                                    <input type="number" id="calcValue" placeholder="1000" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Quantity</label>
+                                    <input type="number" id="calcQuantity" placeholder="1" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Country of Origin</label>
+                                    <select id="calcCountry">
+                                        <option value="CN">China</option>
+                                        <option value="MX">Mexico</option>
+                                        <option value="CA">Canada</option>
+                                        <option value="EU">European Union</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" id="calculateBtn">
+                                <i class="fas fa-calculator"></i> Calculate
+                            </button>
+                        </div>
+                        
+                        <div class="calculation-results" id="calcResults">
+                            <!-- Calculation results will be shown here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Assessment Tab -->
+                <div class="tab-pane" id="risk-assessment-tab">
+                    <div class="feature-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-shield-alt"></i> Risk Assessment</h2>
+                            <p>Check compliance and import restrictions</p>
+                        </div>
+                        
+                        <div class="risk-form">
+                            <div class="form-group">
+                                <label>HTS Code or Product Description</label>
+                                <input type="text" id="riskInput" placeholder="Enter HTS code or product description..." />
+                            </div>
+                            
+                            <button class="btn btn-primary" id="assessRiskBtn">
+                                <i class="fas fa-shield-alt"></i> Assess Risk
+                            </button>
+                        </div>
+                        
+                        <div class="risk-results" id="riskResults">
+                            <!-- Risk assessment results will be shown here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Scenario Analysis Tab -->
+                <div class="tab-pane" id="scenario-analysis-tab">
+                    <div class="feature-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-chart-line"></i> Enhanced Scenario Analysis</h2>
+                            <p>Detailed analysis with rule-based logic and comprehensive data collection</p>
+                        </div>
+                        
+                        <!-- Scenario Creation Form -->
+                        <div class="scenario-form">
+                            <h3><i class="fas fa-plus-circle"></i> Create New Scenario</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Product Description *</label>
+                                    <input type="text" id="scenarioProductDesc" placeholder="e.g., Stainless steel pipes, seamless" />
+                                </div>
+                                <div class="form-group">
+                                    <label>HTS Code (if known)</label>
+                                    <input type="text" id="scenarioHtsCode" placeholder="e.g., 7304.41.00" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Base Value (USD) *</label>
+                                    <input type="number" id="scenarioBaseValue" placeholder="10000" step="0.01" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Quantity *</label>
+                                    <input type="number" id="scenarioQuantity" placeholder="100" min="1" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Origin Country *</label>
+                                    <select id="scenarioOriginCountry">
+                                        <option value="">Select Country</option>
+                                        <option value="China">China</option>
+                                        <option value="Mexico">Mexico</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="Vietnam">Vietnam</option>
+                                        <option value="India">India</option>
+                                        <option value="Germany">Germany</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="South Korea">South Korea</option>
+                                        <option value="Taiwan">Taiwan</option>
+                                        <option value="Thailand">Thailand</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Destination Country</label>
+                                    <select id="scenarioDestCountry">
+                                        <option value="United States">United States</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="Mexico">Mexico</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Currency</label>
+                                    <select id="scenarioCurrency">
+                                        <option value="USD">USD</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="CNY">CNY</option>
+                                        <option value="MXN">MXN</option>
+                                        <option value="CAD">CAD</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Shipping Cost (USD)</label>
+                                    <input type="number" id="scenarioShippingCost" placeholder="500" step="0.01" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Insurance Cost (USD)</label>
+                                    <input type="number" id="scenarioInsuranceCost" placeholder="100" step="0.01" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Additional Costs (USD)</label>
+                                    <input type="number" id="scenarioAdditionalCosts" placeholder="200" step="0.01" />
+                                </div>
+                            </div>
+                            
+                            <div class="scenario-actions">
+                                <button class="btn btn-primary" id="createScenarioBtn">
+                                    <i class="fas fa-save"></i> Create Scenario
+                                </button>
+                                <button class="btn btn-glass" id="quickAnalysisBtn">
+                                    <i class="fas fa-bolt"></i> Quick Analysis
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Scenario Management -->
+                        <div class="scenario-management">
+                            <h3><i class="fas fa-list"></i> Saved Scenarios</h3>
+                            <div class="scenario-list" id="scenarioList">
+                                <!-- Saved scenarios will be listed here -->
+                            </div>
+                            
+                            <div class="scenario-comparison">
+                                <h4><i class="fas fa-balance-scale"></i> Compare Scenarios</h4>
+                                <div class="comparison-controls">
+                                    <select id="scenarioSelect1" multiple>
+                                        <!-- Scenarios will be populated here -->
+                                    </select>
+                                    <button class="btn btn-primary" id="compareScenariosBtn">
+                                        <i class="fas fa-chart-bar"></i> Compare Selected
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Results Display -->
+                        <div class="scenario-results" id="scenarioResults">
+                            <!-- Scenario analysis results will be shown here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Ingestion Tab -->
+                <div class="tab-pane" id="data-ingestion-tab">
+                    <div class="feature-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-database"></i> Data Ingestion</h2>
+                            <p>Add knowledge to improve AI responses</p>
+                        </div>
+                        
+                        <div class="ingestion-form">
+                            <div class="form-group">
+                                <label>Document Type</label>
+                                <select id="docType">
+                                    <option value="regulations">Regulations</option>
+                                    <option value="manual">Manual/Guide</option>
+                                    <option value="policy">Policy Document</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Document Title</label>
+                                <input type="text" id="docTitle" placeholder="Enter document title..." />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Content</label>
+                                <textarea id="docContent" rows="10" placeholder="Paste or type document content here..."></textarea>
+                            </div>
+                            
+                            <div class="upload-section">
+                                <label class="file-upload">
+                                    <input type="file" id="fileUpload" accept=".txt,.pdf,.doc,.docx" />
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Or upload a file</span>
+                                </label>
+                            </div>
+                            
+                            <button class="btn btn-primary" id="ingestDataBtn">
+                                <i class="fas fa-database"></i> Ingest Data
+                            </button>
+                        </div>
+                        
+                        <div class="ingestion-status" id="ingestionStatus">
+                            <!-- Ingestion status will be shown here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div class="tab-pane" id="analytics-tab">
+                    <div class="feature-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-chart-bar"></i> Analytics Dashboard</h2>
+                            <p>Interactive charts and insights for tariff analysis</p>
+                        </div>
+                        
+                        <!-- Dashboard Widgets -->
+                        <div class="dashboard-widgets">
+                            <div class="widget-row">
+                                <div class="widget widget-stats">
+                                    <div class="widget-header">
+                                        <h3><i class="fas fa-search"></i> Search Activity</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="totalSearches">0</span>
+                                            <span class="stat-label">Total Searches</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="todaySearches">0</span>
+                                            <span class="stat-label">Today</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="widget widget-stats">
+                                    <div class="widget-header">
+                                        <h3><i class="fas fa-calculator"></i> Calculations</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="totalCalculations">0</span>
+                                            <span class="stat-label">Total Calculations</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="avgDutyRate">0%</span>
+                                            <span class="stat-label">Avg Duty Rate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="widget widget-stats">
+                                    <div class="widget-header">
+                                        <h3><i class="fas fa-shield-alt"></i> Risk Assessments</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="totalAssessments">0</span>
+                                            <span class="stat-label">Total Assessments</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="highRiskCount">0</span>
+                                            <span class="stat-label">High Risk Items</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="widget widget-stats">
+                                    <div class="widget-header">
+                                        <h3><i class="fas fa-chart-line"></i> Scenarios</h3>
+                                    </div>
+                                    <div class="widget-content">
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="totalScenarios">0</span>
+                                            <span class="stat-label">Total Scenarios</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-number" id="savedScenarios">0</span>
+                                            <span class="stat-label">Saved</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Charts Section -->
+                        <div class="charts-section">
+                            <div class="chart-row">
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <h3><i class="fas fa-chart-pie"></i> Duty Rate Distribution</h3>
+                                        <div class="chart-controls">
+                                            <select id="dutyRateChartType">
+                                                <option value="pie">Pie Chart</option>
+                                                <option value="bar">Bar Chart</option>
+                                                <option value="doughnut">Doughnut</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="dutyRateChart"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <h3><i class="fas fa-chart-bar"></i> Top Categories</h3>
+                                        <div class="chart-controls">
+                                            <select id="categoryChartType">
+                                                <option value="bar">Bar Chart</option>
+                                                <option value="horizontal">Horizontal Bar</option>
+                                                <option value="line">Line Chart</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="categoryChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-row">
+                                <div class="chart-container full-width">
+                                    <div class="chart-header">
+                                        <h3><i class="fas fa-chart-line"></i> Search Trends</h3>
+                                        <div class="chart-controls">
+                                            <select id="trendPeriod">
+                                                <option value="7">Last 7 Days</option>
+                                                <option value="30">Last 30 Days</option>
+                                                <option value="90">Last 90 Days</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="trendChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-row">
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <h3><i class="fas fa-globe"></i> Country Analysis</h3>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="countryChart"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <h3><i class="fas fa-exclamation-triangle"></i> Risk Distribution</h3>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="riskChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Export Section -->
+                        <div class="export-section">
+                            <h3><i class="fas fa-download"></i> Export Analytics</h3>
+                            <div class="export-controls">
+                                <button class="btn btn-primary" id="exportAnalytics">
+                                    <i class="fas fa-file-excel"></i> Export to Excel
+                                </button>
+                                <button class="btn btn-glass" id="exportCharts">
+                                    <i class="fas fa-image"></i> Export Charts
+                                </button>
+                                <button class="btn btn-glass" id="generateReport">
+                                    <i class="fas fa-file-pdf"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Enhanced Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-container">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <div class="loading-text">
+                <h3>Processing...</h3>
+                <p id="loadingMessage">Analyzing your request</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Initial Page Loading Screen -->
+    <div class="initial-loading-screen" id="initialLoadingScreen">
+        <div class="loading-content">
+            <div class="logo-animation">
+                <div class="logo-circle">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>TariffAI</h1>
+                    <p>Intelligent HTS & Tariff Management</p>
+                </div>
+            </div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="loading-status" id="loadingStatus">Initializing...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+</body>
+</html> 

@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Backend FastAPI Service
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      - DATABASE_URL=sqlite+aiosqlite:///./data/tariff_ai.db
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2:3b
+      - CHROMA_DB_PATH=./data/chroma
+      - CORS_ORIGINS=["http://localhost:3000","http://127.0.0.1:3000"]
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+    depends_on:
+      - ollama
+      - chromadb
+    networks:
+      - tariff-ai-network
+
+  # Frontend React Service
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_ENVIRONMENT=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - tariff-ai-network
+
+  # ChromaDB Vector Database
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8001:8000"
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+      - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["http://localhost:3000"]
+    volumes:
+      - chromadb_data:/chroma/chroma
+    networks:
+      - tariff-ai-network
+
+  # Ollama LLM Service
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - tariff-ai-network
+
+volumes:
+  chromadb_data:
+  ollama_data:
+
+networks:
+  tariff-ai-network:
+    driver: bridge 

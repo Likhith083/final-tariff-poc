@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What is an HTS code?",
+    "answer": "HTS (Harmonized Tariff Schedule) codes are 6-10 digit numbers used to classify imported goods for customs purposes. They determine duty rates and import requirements.",
+    "category": "basics"
+  },
+  {
+    "question": "How do I calculate import duty?",
+    "answer": "Import duty is calculated by multiplying the customs value of goods by the applicable duty rate percentage. Additional fees like MPF (Merchandise Processing Fee) and HMF (Harbor Maintenance Fee) may also apply.",
+    "category": "calculations"
+  },
+  {
+    "question": "What is the difference between duty and tax?",
+    "answer": "Duty is a tax on imports/exports, while tax typically refers to domestic sales tax. Import duty is calculated on the customs value, while sales tax is calculated on the final sale price including duty.",
+    "category": "basics"
+  },
+  {
+    "question": "What documents do I need for import?",
+    "answer": "Common import documents include: Commercial Invoice, Packing List, Bill of Lading, Customs Declaration, and any required permits or certificates depending on the product type.",
+    "category": "documentation"
+  },
+  {
+    "question": "What is AD/CVD?",
+    "answer": "AD/CVD stands for Anti-Dumping and Countervailing Duties. Anti-dumping duties protect against unfairly priced imports, while countervailing duties offset foreign government subsidies.",
+    "category": "regulations"
+  },
+  {
+    "question": "How do I find the correct HTS code?",
+    "answer": "Start with the general description of your product, then use the HTS classification system to narrow down to the most specific code. Consider material composition, function, and use when classifying.",
+    "category": "classification"
+  },
+  {
+    "question": "What is the de minimis value?",
+    "answer": "De minimis value is the threshold below which imports are exempt from duty and tax. In the US, this is typically $800 for most imports, but varies by country and trade agreements.",
+    "category": "regulations"
+  },
+  {
+    "question": "How do trade agreements affect duty rates?",
+    "answer": "Trade agreements like NAFTA, USMCA, or free trade agreements can reduce or eliminate duty rates for qualifying goods from partner countries. Rules of origin must be met to qualify.",
+    "category": "trade_agreements"
+  },
+  {
+    "question": "What is a customs bond?",
+    "answer": "A customs bond is a financial guarantee that ensures payment of duties, taxes, and fees. It's required for formal entries and protects the government against non-payment.",
+    "category": "regulations"
+  },
+  {
+    "question": "How do I appeal a customs decision?",
+    "answer": "Customs decisions can be appealed through the Court of International Trade or through administrative procedures. Time limits apply, typically 180 days from the decision date.",
+    "category": "procedures"
+  }
+] 

@@ -1,0 +1,54 @@
+{
+  "name": "tariff-ai-monorepo",
+  "version": "1.0.0",
+  "description": "Intelligent HTS & Tariff Management System - Monorepo",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && python run.py",
+    "dev:frontend": "cd frontend && npm start",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && pytest",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && black . && isort . && flake8 .",
+    "lint:frontend": "cd frontend && npm run lint",
+    "format": "npm run format:backend && npm run format:frontend",
+    "format:backend": "cd backend && black . && isort .",
+    "format:frontend": "cd frontend && npm run format",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
+    "setup": "npm run install:all && npm run setup:backend",
+    "setup:backend": "cd backend && python -c \"from app.services.db_init import init_database; import asyncio; asyncio.run(init_database())\"",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/tariff-ai-monorepo.git"
+  },
+  "keywords": [
+    "tariff",
+    "hts",
+    "ai",
+    "fastapi",
+    "react",
+    "monorepo"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+} 

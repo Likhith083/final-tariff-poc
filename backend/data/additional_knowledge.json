@@ -1,0 +1,52 @@
+[
+  {
+    "question": "How do I calculate import duties?",
+    "answer": "Import duties are calculated using the formula: Customs Value × Duty Rate = Duty Amount. The customs value is typically the commercial invoice value plus shipping costs. Additional fees like MPF (Merchandise Processing Fee) and HMF (Harbor Maintenance Fee) may also apply. MPF is 0.3464% with a minimum of $31.67 and maximum of $768.50. HMF is 0.125% of the commercial value.",
+    "category": "calculations"
+  },
+  {
+    "question": "What are the most common HTS chapters?",
+    "answer": "Common HTS chapters include: Chapter 1-24 (Food products), Chapter 25-27 (Mineral products), Chapter 28-38 (Chemicals), Chapter 39-40 (Plastics and rubber), Chapter 41-43 (Leather goods), Chapter 44-49 (Wood and paper), Chapter 50-63 (Textiles), Chapter 64-67 (Footwear and accessories), Chapter 68-71 (Stone and precious metals), Chapter 72-83 (Base metals), Chapter 84-85 (Machinery and electrical), Chapter 86-89 (Transportation), Chapter 90-97 (Miscellaneous).",
+    "category": "classification"
+  },
+  {
+    "question": "What is the difference between NTR and Column 2 rates?",
+    "answer": "NTR (Normal Trade Relations) rates, formerly known as MFN (Most Favored Nation) rates, are the standard duty rates that apply to countries with normal trade relations with the US. Column 2 rates are much higher penalty rates that apply to countries without normal trade relations. Most countries qualify for NTR rates under WTO agreements.",
+    "category": "rates"
+  },
+  {
+    "question": "How do free trade agreements affect duty rates?",
+    "answer": "Free trade agreements (FTAs) like USMCA, CAFTA-DR, and bilateral agreements can reduce or eliminate duty rates for qualifying goods. To qualify, products must meet specific rules of origin requirements, which vary by agreement and product type. Common criteria include substantial transformation, tariff shift, or regional value content thresholds.",
+    "category": "trade_agreements"
+  },
+  {
+    "question": "What is GSP and how does it work?",
+    "answer": "GSP (Generalized System of Preferences) is a trade program that provides duty-free treatment for thousands of products from designated beneficiary countries. GSP aims to promote economic development in developing countries. Products must meet specific criteria including direct shipment requirements and rules of origin. The program periodically expires and requires renewal by Congress.",
+    "category": "trade_programs"
+  },
+  {
+    "question": "What documents are required for customs clearance?",
+    "answer": "Essential documents for customs clearance include: Commercial Invoice (showing value, description, quantity), Packing List (detailed contents), Bill of Lading or Air Waybill (transport document), Entry form (CBP Form 7501 for formal entries), and any required permits or certificates. Additional documents may include certificates of origin, FDA forms, or other agency requirements depending on the product type.",
+    "category": "documentation"
+  },
+  {
+    "question": "What is a customs bond and when is it required?",
+    "answer": "A customs bond is a financial guarantee that ensures payment of duties, taxes, and fees to CBP. It's required for all formal entries (valued over $2,500) and certain informal entries. There are single transaction bonds (STB) for occasional shipments and continuous bonds for regular importers. The bond amount is typically 10% of duties, taxes, and fees, with a minimum of $100 for STB and $50,000 for continuous bonds.",
+    "category": "bonds"
+  },
+  {
+    "question": "How do I classify textiles and apparel?",
+    "answer": "Textile and apparel classification in HTS Chapters 50-63 is based on: 1) Fiber composition (cotton, wool, synthetic, etc.), 2) Construction method (woven, knitted, etc.), 3) Gender and age group (men's, women's, children's), 4) Specific garment type. The classification follows a hierarchical system where fiber content often determines the chapter, then construction and garment type determine the heading and subheading.",
+    "category": "textiles"
+  },
+  {
+    "question": "What are Section 232 and Section 301 tariffs?",
+    "answer": "Section 232 tariffs are imposed on imports that threaten national security, commonly applied to steel and aluminum. Section 301 tariffs are trade sanctions imposed for unfair trade practices, notably used against China. These are additional tariffs imposed on top of normal duty rates. Both programs have exclusion processes for specific products or companies that can demonstrate economic hardship or lack of domestic availability.",
+    "category": "trade_sanctions"
+  },
+  {
+    "question": "How do I determine country of origin?",
+    "answer": "Country of origin is determined by where the product was wholly obtained or last substantially transformed. For manufactured goods, substantial transformation occurs when processing results in a new and different article with a new name, character, or use. Marking requirements generally follow the same principles. For textiles, there are specific rules based on where certain processes like weaving, knitting, or cutting and sewing occur.",
+    "category": "origin"
+  }
+]
