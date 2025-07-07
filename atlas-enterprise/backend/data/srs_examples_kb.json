@@ -1,0 +1,37 @@
+[
+  {
+    "title": "McKesson Nitrile Gloves Tariff Analysis",
+    "content": "Product: McKesson Nitrile Medical Gloves\nCountry of Origin: Malaysia\nMaterial Composition: 100% Nitrile (synthetic rubber)\nHTS Code: 4015.19.0510 (Disposable gloves of vulcanized rubber)\nTariff Rate: 3.0% (USITC HTS 2025)\nEstimated Cost Breakdown:\n- Base Price: $1.00 per unit\n- Tariff (3.0%): $0.03\n- MPF (0.3464%): $0.02\n- Total Landed Cost: $1.05\nClassification Justification: Based on nitrile material composition and disposable medical use",
+    "category": "case_study"
+  },
+  {
+    "title": "Stanley Black & Decker Cordless Drill Analysis",
+    "content": "Product: Stanley Black & Decker Cordless Drill\nCountry of Origin: China\nMaterial Composition: 60% Steel, 30% Plastic, 10% Electronics\nHTS Code: 8467.21.0030 (Drills with self-contained electric motor)\nTariff Rate: 1.7% (USITC HTS 2025)\nEstimated Cost Breakdown:\n- Base Price: $50.00 per unit\n- Tariff (1.7%): $0.85\n- MPF (0.3464%): $0.50\n- Total Landed Cost: $51.35\nAlternative Sourcing Options:\n1. Mexico: 0% tariff (USMCA), Landed Cost: $50.50 (saves $0.85)\n2. Vietnam: 1.0% tariff, Landed Cost: $51.00 (saves $0.35)\n3. Thailand: 1.5% tariff, Landed Cost: $51.25 (saves $0.10)",
+    "category": "case_study"
+  },
+  {
+    "title": "Material Composition Optimization Strategies",
+    "content": "Material Tariff Optimization Examples:\n\n1. Steel to Aluminum Substitution:\n- Steel (HS 7326): 2.9% duty\n- Aluminum (HS 7604): 2.1% duty\n- Savings: 0.8% reduction in duty rate\n- Quality Impact: 95% strength retention\n\n2. Cotton to Polyester Blend:\n- 100% Cotton (HS 6109): 16.5% duty\n- 50% Cotton/50% Polyester (HS 6110): 12.0% duty\n- Savings: 4.5% reduction in duty rate\n- Quality Impact: Similar durability, different feel\n\n3. Plastic Type Optimization:\n- PVC (HS 3917): 5.3% duty\n- Polyethylene (HS 3916): 3.4% duty\n- Savings: 1.9% reduction in duty rate\n- Quality considerations: temperature resistance varies",
+    "category": "optimization"
+  },
+  {
+    "title": "USMCA Trade Agreement Benefits",
+    "content": "USMCA (United States-Mexico-Canada Agreement) Tariff Benefits:\n\n1. Qualifying Products:\n- Must meet rules of origin requirements\n- Generally 75% North American content for autos, varies by product\n- Proper documentation required (USMCA Certificate of Origin)\n\n2. Duty Savings Examples:\n- Automotive parts: Up to 25% duty elimination\n- Agricultural products: Immediate duty-free access\n- Textiles: Duty-free if yarn-forward rule met\n- Steel/aluminum: Duty-free for qualifying products\n\n3. Documentation Requirements:\n- USMCA Certificate of Origin\n- Supporting records for 5 years\n- Importer certification or exporter declaration\n\n4. Common Sourcing Benefits:\n- Mexico manufacturing: 0% vs China's higher rates\n- Canadian raw materials: Duty-free access\n- Regional supply chain optimization",
+    "category": "trade_agreements"
+  },
+  {
+    "title": "HTS Classification Best Practices",
+    "content": "HTS Code Classification Guidelines:\n\n1. General Rules of Interpretation (GRI):\n- GRI 1: Classification by heading descriptions\n- GRI 2: Incomplete/unfinished articles\n- GRI 3: Multiple possible headings - most specific wins\n- GRI 6: Comparable subheadings use same rules\n\n2. Common Classification Principles:\n- Function over form: What the product does\n- Material composition: Predominant material\n- Essential character: Most important feature\n- Intended use: Design purpose and marketing\n\n3. Documentation for Classification:\n- Technical specifications\n- Material safety data sheets\n- Marketing literature\n- Manufacturing process details\n- Similar product precedents\n\n4. When to Seek Ruling:\n- Complex multi-material products\n- New product categories\n- High-volume/high-value imports\n- Uncertain between classifications",
+    "category": "classification"
+  },
+  {
+    "title": "Duty Calculation Components and Fees",
+    "content": "Complete Duty and Fee Calculation:\n\n1. Base Duty Calculation:\n- Duty = Customs Value × Duty Rate %\n- Customs Value = FOB price + packing costs\n- Excludes international freight and insurance\n\n2. Merchandise Processing Fee (MPF):\n- Rate: 0.3464% of entered value\n- Minimum: $27.23 per entry\n- Maximum: $528.33 per entry\n- Applies to most commercial imports\n\n3. Harbor Maintenance Fee (HMF):\n- Rate: 0.125% of cargo value\n- Applies to imports arriving by sea\n- Calculated on port-specific basis\n\n4. Additional Potential Fees:\n- Section 301 tariffs: 7.5%-25% (China-specific)\n- Anti-dumping duties: Varies by product/country\n- Countervailing duties: Offset foreign subsidies\n- Section 232 tariffs: Steel/aluminum (25%/10%)\n\n5. Example Complete Calculation:\n- Product value: $1,000\n- Base duty (5%): $50\n- MPF (0.3464%): $27.23 (minimum)\n- HMF (0.125%): $1.25\n- Total: $1,078.48",
+    "category": "fee_calculations"
+  },
+  {
+    "title": "Alternative Sourcing Country Analysis",
+    "content": "Strategic Sourcing Alternatives by Product Category:\n\n1. Electronics/Machinery:\n- Vietnam: Generally 1.0-2.0% vs China's higher rates\n- Taiwan: MFN rates, established supply chains\n- South Korea: Some FTA benefits\n- Thailand: 1.5-2.5% average rates\n\n2. Textiles/Apparel:\n- Mexico: USMCA benefits (0% if qualifying)\n- Vietnam: Lower labor costs, competitive rates\n- Bangladesh: GSP eligible (program suspended)\n- El Salvador: CAFTA-DR benefits\n\n3. Medical Supplies:\n- Malaysia: Competitive rates, established industry\n- Thailand: 2-3% average, good infrastructure\n- Mexico: USMCA potential for certain items\n- India: Large manufacturing base\n\n4. Total Cost Considerations:\n- Freight costs: Distance and transportation\n- Lead times: Inventory carrying costs\n- Quality standards: Compliance costs\n- Supply chain risk: Diversification benefits\n- Currency fluctuation: Hedging requirements",
+    "category": "sourcing"
+  }
+]

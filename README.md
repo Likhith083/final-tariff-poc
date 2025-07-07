@@ -1,4 +1,4 @@
-# 🚢 TariffAI - Intelligent HTS & Tariff Management
+# 🚢 ATLAS - Intelligent HTS & Tariff Management
 
 A comprehensive, AI-powered tariff management system that consolidates the best features from multiple projects into a clean, modern, and scalable solution.
 

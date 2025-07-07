@@ -1,0 +1,22 @@
+# ATLAS Enterprise Backend Dependencies (Minimal for Testing)
+# Core FastAPI and async support
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# External API integrations
+httpx==0.25.2
+
+# Security and authentication
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6
+
+# AI Services
+groq==0.4.1
+
+# Currency conversion (no API required)
+forex-python==1.8
+
+# Environment and configuration
+python-dotenv==1.0.0 

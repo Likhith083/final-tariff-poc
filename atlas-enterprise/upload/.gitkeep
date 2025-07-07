@@ -1,0 +1,2 @@
+# This file ensures the uploads directory is preserved in git
+# Uploads directory is used for file uploads and temporary storage 

@@ -1,0 +1,102 @@
+[
+  {
+    "question": "What is an HTS code?",
+    "answer": "HTS (Harmonized Tariff Schedule) codes are 6-10 digit numbers used to classify imported goods for customs purposes. They determine duty rates and import requirements. The first 6 digits follow the international HS system, while additional digits are country-specific.",
+    "category": "basics"
+  },
+  {
+    "question": "How do I calculate import duty?",
+    "answer": "Import duty is calculated by multiplying the customs value of goods by the applicable duty rate percentage. Formula: Duty = (Customs Value) × (Duty Rate %). Additional fees like MPF (Merchandise Processing Fee) and HMF (Harbor Maintenance Fee) may also apply.",
+    "category": "calculations"
+  },
+  {
+    "question": "What is HTS 4015.19.0510 for nitrile gloves?",
+    "answer": "HTS 4015.19.0510 classifies disposable gloves of vulcanized rubber, including nitrile gloves. Current duty rate is 3.0%. These are commonly used medical/industrial gloves made from synthetic rubber materials.",
+    "category": "hts_codes"
+  },
+  {
+    "question": "What is HTS 8467.21.0030 for cordless drills?",
+    "answer": "HTS 8467.21.0030 classifies drills with self-contained electric motor, including cordless drills. Current duty rate is 1.7%. This covers power tools with integrated rechargeable batteries.",
+    "category": "hts_codes"
+  },
+  {
+    "question": "What are USMCA FTA benefits?",
+    "answer": "USMCA (United States-Mexico-Canada Agreement) provides duty-free treatment for qualifying goods from Mexico and Canada. Products must meet rules of origin requirements. This can eliminate tariffs entirely for eligible items.",
+    "category": "trade_agreements"
+  },
+  {
+    "question": "How to reduce tariffs through material composition?",
+    "answer": "Material composition changes can shift HTS classification to lower-duty categories. For example, changing from 100% steel to 50% aluminum in tools may reduce classification from HS 7326 (2.9% duty) to HS 7604 (2.1% duty), saving approximately $0.40 per $50 item.",
+    "category": "material_optimization"
+  },
+  {
+    "question": "What is MPF (Merchandise Processing Fee)?",
+    "answer": "MPF is a fee charged by US Customs for processing imports. Rate is 0.3464% of entered value, with minimum $27.23 and maximum $528.33 per entry. Applied to most commercial imports in addition to duty.",
+    "category": "fees"
+  },
+  {
+    "question": "What are common sourcing alternatives to China?",
+    "answer": "Alternative sourcing countries with lower tariffs include: Vietnam (often 1.0-2.0% vs China's higher rates), Thailand (1.5-2.5%), Mexico (0% under USMCA for qualifying goods), Malaysia (2.0-3.0%). Consider total landed cost including shipping.",
+    "category": "sourcing"
+  },
+  {
+    "question": "How to classify composite products with multiple materials?",
+    "answer": "Composite products are classified by the material that gives the product its essential character. For items with 60% steel, 30% plastic, 10% electronics, classification follows the predominant material (steel). Each component may have different duty rates requiring weighted calculation.",
+    "category": "classification"
+  },
+  {
+    "question": "What documents are needed for import?",
+    "answer": "Required import documents include: Commercial Invoice, Packing List, Bill of Lading/Airway Bill, Customs Declaration (CBP Form 7501), and product-specific permits or certificates. Additional documents may be required based on product type and country of origin.",
+    "category": "documentation"
+  },
+  {
+    "question": "What is customs value for duty calculation?",
+    "answer": "Customs value is typically the transaction value (price paid or payable) including packing costs, but excluding international freight and insurance. This value forms the basis for duty calculation: Duty = Customs Value × Duty Rate.",
+    "category": "valuation"
+  },
+  {
+    "question": "How to determine country of origin for tariff purposes?",
+    "answer": "Country of origin is where goods were wholly obtained or underwent substantial transformation. For manufactured goods, it's where the last substantial transformation occurred that changed the tariff classification or gave the product its essential character.",
+    "category": "origin"
+  },
+  {
+    "question": "What are common HTS codes for medical supplies?",
+    "answer": "Common medical supply HTS codes: 4015.19.0510 (nitrile gloves, 3.0%), 9020.00.0000 (respiratory equipment, 0-5%), 3926.90.9980 (plastic medical devices, 5.3%), 6307.90.9889 (surgical masks, 7.0%). Rates vary by specific product characteristics.",
+    "category": "medical_hts"
+  },
+  {
+    "question": "What are common HTS codes for tools and hardware?",
+    "answer": "Common tool HTS codes: 8467.21.0030 (cordless drills, 1.7%), 8205.40.0000 (screwdrivers, 6.2%), 8205.20.6000 (hammers, 5.7%), 8204.11.0000 (wrenches, 9.0%). Power tools generally have lower rates than hand tools.",
+    "category": "tools_hts"
+  },
+  {
+    "question": "How do trade wars affect tariffs?",
+    "answer": "Trade disputes can result in additional tariffs (Section 301, anti-dumping duties) on top of normal MFN rates. These can range from 7.5% to 25% or higher. Always check CBP's tariff database for current additional duty rates on specific products and countries.",
+    "category": "trade_policy"
+  },
+  {
+    "question": "What is the difference between HS and HTS codes?",
+    "answer": "HS (Harmonized System) codes are 6-digit international standard codes. HTS (Harmonized Tariff Schedule) codes are country-specific extensions, typically 8-10 digits. US uses 10-digit HTS codes where first 6 digits match international HS system.",
+    "category": "classification_systems"
+  },
+  {
+    "question": "How to calculate landed cost?",
+    "answer": "Landed Cost = Product Cost + Freight + Insurance + Duty + MPF + Other Fees. Example: $50 drill + $5 freight + $0.85 duty (1.7%) + $0.50 MPF = $56.35 total landed cost. Include all costs to get goods to final destination.",
+    "category": "cost_calculation"
+  },
+  {
+    "question": "What are Section 301 tariffs?",
+    "answer": "Section 301 tariffs are additional duties imposed due to trade disputes, particularly affecting Chinese imports. Rates can be 7.5%, 15%, or 25% on top of normal MFN rates. Check USTR's Section 301 product lists for current coverage.",
+    "category": "additional_tariffs"
+  },
+  {
+    "question": "How to qualify for duty-free treatment?",
+    "answer": "Duty-free treatment available through: 1) FTA agreements (USMCA, etc.) if rules of origin met, 2) GSP program for developing countries (suspended 2020), 3) Certain raw materials under various programs. Requires proper documentation and qualification.",
+    "category": "duty_free"
+  },
+  {
+    "question": "What is substantial transformation for country of origin?",
+    "answer": "Substantial transformation occurs when manufacturing results in a new article with different name, character, or use. Simple assembly or packaging typically doesn't qualify. Must result in change in tariff classification at 4-digit HS level or meet specific value-added thresholds.",
+    "category": "origin_rules"
+  }
+]

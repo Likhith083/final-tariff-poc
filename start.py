@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TariffAI Startup Script
+ATLAS Startup Script
 Easily start both backend and frontend services
 """
 import os
@@ -13,7 +13,7 @@ from pathlib import Path
 def print_banner():
     """Print startup banner"""
     print("=" * 60)
-    print("🚢 TariffAI - Intelligent HTS & Tariff Management")
+    print("🚢 ATLAS - Intelligent HTS & Tariff Management")
     print("=" * 60)
     print("Starting consolidated tariff management system...")
     print()
@@ -186,7 +186,7 @@ def open_browser():
     time.sleep(2)
     try:
         webbrowser.open("http://localhost:3000")
-        print("✅ Browser opened to TariffAI")
+        print("✅ Browser opened to ATLAS")
     except Exception as e:
         print(f"⚠️ Could not open browser automatically: {e}")
         print("Please manually open http://localhost:3000")
@@ -225,7 +225,7 @@ def main():
     open_browser()
     
     print("\n" + "=" * 60)
-    print("🎉 TariffAI is now running!")
+    print("🎉 ATLAS is now running!")
     print("=" * 60)
     print("📱 Frontend: http://localhost:3000")
     print("🔧 Backend API: http://localhost:8000")
@@ -259,7 +259,7 @@ def main():
             frontend_process.terminate()
             print("✅ Frontend stopped")
         
-        print("\n👋 TariffAI stopped. Goodbye!")
+        print("\n👋 ATLAS stopped. Goodbye!")
 
 if __name__ == "__main__":
     main() 
