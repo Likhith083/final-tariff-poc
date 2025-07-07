@@ -259,25 +259,46 @@ def search_hts_data(query: str, chapter: Optional[str] = None, limit: int = 20) 
         return []
     
     query_lower = query.lower()
+    # Remove periods from query for HTS code search
+    query_clean = query.replace('.', '')
     results = []
     
     for row in HTS_DATA:
-        # Search in description (case-insensitive)
-        if query_lower in str(row.get('description', '')).lower():
+        hts_code = str(row.get('hts_code', ''))
+        description = str(row.get('description', ''))
+        
+        # Check if query looks like an HTS code (contains numbers and is short)
+        is_hts_code_search = (
+            query_clean.isdigit() or 
+            (len(query_clean) <= 10 and any(c.isdigit() for c in query_clean))
+        )
+        
+        matched = False
+        
+        if is_hts_code_search:
+            # Search by HTS code (ignoring periods)
+            hts_code_clean = hts_code.replace('.', '')
+            if query_clean in hts_code_clean:
+                matched = True
+        else:
+            # Search in description (case-insensitive)
+            if query_lower in description.lower():
+                matched = True
+        
+        if matched:
             # If chapter filter is specified, check if it matches
             if chapter:
-                hts_code = str(row.get('hts_code', ''))
                 if not hts_code.startswith(chapter):
                     continue
             
             # Format the result
             result = {
                 "id": len(results) + 1,
-                "hts_code": str(row.get('hts_code', '')),
-                "description": str(row.get('description', '')),
-                "chapter": str(row.get('hts_code', ''))[:2] if len(str(row.get('hts_code', ''))) >= 2 else '',
-                "heading": str(row.get('hts_code', ''))[:4] if len(str(row.get('hts_code', ''))) >= 4 else '',
-                "subheading": str(row.get('hts_code', ''))[:6] if len(str(row.get('hts_code', ''))) >= 6 else '',
+                "hts_code": hts_code,
+                "description": description,
+                "chapter": hts_code[:2] if len(hts_code) >= 2 else '',
+                "heading": hts_code[:4] if len(hts_code) >= 4 else '',
+                "subheading": hts_code[:6] if len(hts_code) >= 6 else '',
                 "general_rate": float(row.get('general_rate', 0)),
                 "special_rate": None,
                 "other_rate": None,

@@ -16,7 +16,9 @@ import {
   Package,
   FileText,
   AlertCircle,
-  Loader2
+  Loader2,
+  ExternalLink,
+  ArrowRight
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -99,6 +101,12 @@ export const HTSSearchPage: React.FC = () => {
     return `${rate}%`
   }
   
+  // Check if search is by HTS code
+  const isHTSCodeSearch = (query: string) => {
+    const cleanQuery = query.replace(/\./g, '')
+    return /^\d+$/.test(cleanQuery) || (cleanQuery.length <= 10 && /\d/.test(cleanQuery))
+  }
+  
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -106,6 +114,32 @@ export const HTSSearchPage: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-900">HTS Code Search</h1>
         <p className="text-gray-600 mt-2">Search for Harmonized Tariff Schedule codes and descriptions</p>
       </div>
+
+      {/* External Cartage AI Link */}
+      <Card className="border-blue-200 bg-blue-50">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <ExternalLink className="h-5 w-5 text-white" />
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-blue-900">Need More HTS Code Help?</h3>
+                <p className="text-sm text-blue-700">Try our partner's free HTS code lookup tool</p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => window.open('https://www.cartage.ai/tools/hts-code-lookup?utm_source=chatgpt.com', '_blank')}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <span>Visit Cartage AI</span>
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Search Bar */}
       <Card>
@@ -116,7 +150,7 @@ export const HTSSearchPage: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="text"
-                placeholder="Search by HTS code or product description..."
+                placeholder="Search by HTS code (e.g., 8471.30.01) or product description (e.g., laptop computer)..."
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -125,6 +159,26 @@ export const HTSSearchPage: React.FC = () => {
                 <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 animate-spin text-gray-400" />
               )}
             </div>
+            
+            {/* Search Tips */}
+            <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+              <p className="font-medium mb-1">💡 Search Tips:</p>
+              <ul className="space-y-1 text-xs">
+                <li>• <strong>By HTS Code:</strong> Enter codes like "8471.30.01" or "84713001" (periods are optional)</li>
+                <li>• <strong>By Product:</strong> Describe your product like "smartphone" or "cotton t-shirt"</li>
+                <li>• <strong>By Keywords:</strong> Use terms like "electronics" or "textiles" for broader results</li>
+              </ul>
+            </div>
+            
+            {/* Search Type Indicator */}
+            {debouncedSearchTerm && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-600">Search type:</span>
+                <Badge variant={isHTSCodeSearch(debouncedSearchTerm) ? "default" : "secondary"}>
+                  {isHTSCodeSearch(debouncedSearchTerm) ? "HTS Code Search" : "Product Description Search"}
+                </Badge>
+              </div>
+            )}
             
             {/* Filters */}
             <div className="flex items-center justify-between">
