@@ -18,10 +18,19 @@ import {
   CheckCircle,
   Info,
   Settings,
-  ShoppingCart
+  ShoppingCart,
+  Upload,
+  X,
+  File,
+  FileType,
+  Plus
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAIChat } from '@/hooks/useAI'
+import ConversationExport from '@/components/ChatExport'
+import { useChatExport } from '@/hooks/useChatExport'
+import { mockProducts, Product } from '@/data/mockProducts'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 interface Message {
   id: string
@@ -63,10 +72,22 @@ export const AIChatbotPage: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<ModelType>('groq')
   const [enableProductSearch, setEnableProductSearch] = useState(false)
   const [productQuery, setProductQuery] = useState('')
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const [showFileUpload, setShowFileUpload] = useState(false)
+  const [showExport, setShowExport] = useState(false)
+  const [knowledgeText, setKnowledgeText] = useState('')
+  const [isSubmittingKnowledge, setIsSubmittingKnowledge] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [realProducts, setRealProducts] = useState<Product[]>([])
+  const [showAddProduct, setShowAddProduct] = useState(false)
+  const [newProduct, setNewProduct] = useState<Partial<Product>>({ name: '', description: '', htsCode: '', alternatives: [] })
+  const [addProductError, setAddProductError] = useState<string | null>(null)
 
   // AI chat mutation
   const aiChatMutation = useAIChat()
+  const { exportConversation } = useChatExport()
 
   const quickPrompts: QuickPrompt[] = [
     {
@@ -112,6 +133,9 @@ export const AIChatbotPage: React.FC = () => {
       category: 'general'
     }
   ]
+
+  // allProducts combines mock data (for demo/testing) and user-added products
+  const allProducts = [...mockProducts, ...realProducts]
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -194,6 +218,65 @@ export const AIChatbotPage: React.FC = () => {
     handleSendMessage(prompt.prompt)
   }
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || [])
+    const validFiles = files.filter(file => {
+      const isValidType = file.type === 'application/pdf' || 
+                         file.type === 'application/msword' ||
+                         file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+                         file.type === 'text/plain'
+      const isValidSize = file.size <= 10 * 1024 * 1024 // 10MB limit
+      
+      if (!isValidType) {
+        toast.error(`${file.name}: Unsupported file type`)
+        return false
+      }
+      if (!isValidSize) {
+        toast.error(`${file.name}: File too large (max 10MB)`)
+        return false
+      }
+      return true
+    })
+    
+    setUploadedFiles(prev => [...prev, ...validFiles])
+  }
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const uploadFiles = async () => {
+    if (uploadedFiles.length === 0) return
+    
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      uploadedFiles.forEach((file, index) => {
+        formData.append(`files`, file)
+      })
+      
+      // Call backend API to upload files
+      const response = await fetch('/api/v1/knowledge/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        toast.success(`Successfully uploaded ${uploadedFiles.length} files to knowledge base`)
+        setUploadedFiles([])
+        setShowFileUpload(false)
+      } else {
+        throw new Error('Upload failed')
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast.error('Failed to upload files. Please try again.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const formatTimestamp = (timestamp: Date) => {
     return timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
@@ -214,6 +297,21 @@ export const AIChatbotPage: React.FC = () => {
       default: return model
     }
   }
+
+  // Handler to add a real product (with validation)
+  const handleAddProduct = () => {
+    if (!newProduct.name || !newProduct.htsCode) {
+      setAddProductError('Product name and HTS code are required.');
+      return;
+    }
+    setRealProducts(prev => [
+      ...prev,
+      { ...newProduct, id: `real-${Date.now()}`, alternatives: newProduct.alternatives || [] } as Product
+    ]);
+    setShowAddProduct(false);
+    setNewProduct({ name: '', description: '', htsCode: '', alternatives: [] });
+    setAddProductError(null);
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
@@ -245,22 +343,241 @@ export const AIChatbotPage: React.FC = () => {
               {quickPrompts.map((prompt) => (
                 <Button
                   key={prompt.id}
-                  className="w-full justify-start h-auto p-3 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                  className="w-full justify-start h-auto p-3 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 whitespace-normal break-words text-left"
+                  style={{ wordBreak: 'break-word', whiteSpace: 'normal', minHeight: '56px' }}
                   onClick={() => handleQuickPrompt(prompt)}
                 >
-                  <div className="flex items-start gap-3 text-left">
+                  <div className="flex items-start gap-3 text-left w-full">
                     <div className="mt-0.5 text-blue-600">
                       {prompt.icon}
                     </div>
-                    <div>
+                    <div className="w-full">
                       <div className="font-medium text-sm">{prompt.title}</div>
-                      <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                      <div className="text-xs text-gray-500 mt-1 line-clamp-2 break-words whitespace-normal w-full">
                         {prompt.prompt}
                       </div>
                     </div>
                   </div>
                 </Button>
               ))}
+            </CardContent>
+          </Card>
+
+          {/* File Upload Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Knowledge Base Upload
+              </CardTitle>
+              <CardDescription>
+                Upload documents or paste text to enhance AI responses
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={() => setShowFileUpload(!showFileUpload)}
+                  variant="outline"
+                  className="w-full justify-center"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {showFileUpload ? 'Hide Upload' : 'Upload Files'}
+                </Button>
+                
+                {showFileUpload && (
+                  <div className="space-y-3">
+                    <div 
+                      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <p className="text-sm text-gray-600">
+                        Drop files here or click to browse
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Supports: PDF, DOC, DOCX, TXT files
+                      </p>
+                    </div>
+                    
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept=".pdf,.doc,.docx,.txt"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                    
+                    {uploadedFiles.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-gray-700">
+                          Selected Files ({uploadedFiles.length}):
+                        </p>
+                        {uploadedFiles.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                            <div className="flex items-center gap-2">
+                              <FileType className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm">{file.name}</span>
+                              <span className="text-xs text-gray-500">
+                                ({(file.size / 1024).toFixed(1)} KB)
+                              </span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeFile(index)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                        
+                        <Button
+                          onClick={uploadFiles}
+                          disabled={isUploading}
+                          className="w-full"
+                        >
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4 mr-2" />
+                              Upload to Knowledge Base
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                    {/* Direct Text Input for Knowledge Base */}
+                    <div className="space-y-2">
+                      <textarea
+                        className="w-full min-h-[80px] p-2 border border-gray-300 rounded-md text-sm resize-vertical"
+                        placeholder="Paste or type knowledge here (e.g. regulations, product info, compliance notes)"
+                        value={knowledgeText}
+                        onChange={e => setKnowledgeText(e.target.value)}
+                        maxLength={5000}
+                      />
+                      <Button
+                        onClick={async () => {
+                          if (!knowledgeText.trim()) return;
+                          setIsSubmittingKnowledge(true);
+                          try {
+                            const response = await fetch('/api/v1/knowledge/add-from-text', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ content: knowledgeText })
+                            });
+                            if (response.ok) {
+                              toast.success('Knowledge added successfully!');
+                              setKnowledgeText('');
+                            } else {
+                              toast.error('Failed to add knowledge.');
+                            }
+                          } catch (err) {
+                            toast.error('Error adding knowledge.');
+                          } finally {
+                            setIsSubmittingKnowledge(false);
+                          }
+                        }}
+                        disabled={isSubmittingKnowledge || !knowledgeText.trim()}
+                        className="w-full"
+                      >
+                        {isSubmittingKnowledge ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+                        Add to Knowledge Base
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Product Quick Prompts */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="h-5 w-5" />
+                Product Quick Prompts
+              </CardTitle>
+              <CardDescription>
+                Explore products and alternatives
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <>
+                {allProducts.map(product => (
+                  <Button
+                    key={product.id}
+                    className="w-full justify-start h-auto p-2 border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 whitespace-normal break-words text-left"
+                    style={{ wordBreak: 'break-word', whiteSpace: 'normal', minHeight: '40px' }}
+                    onClick={() => handleQuickPrompt({
+                      id: product.id,
+                      title: product.name,
+                      prompt: `Classify or analyze: ${product.name} (HTS: ${product.htsCode})\n${product.description}`,
+                      icon: <Search className="h-4 w-4" />,
+                      category: 'search'
+                    })}
+                  >
+                    <div className="font-medium text-sm">{product.name}</div>
+                    <div className="text-xs text-gray-500 mt-1 line-clamp-2 break-words whitespace-normal w-full">
+                      {product.description}
+                    </div>
+                    {product.alternatives && product.alternatives.length > 0 && (
+                      <div className="text-xs text-blue-500 mt-1">Alternatives: {product.alternatives.map(a => a.name).join(', ')}</div>
+                    )}
+                  </Button>
+                ))}
+                <Button variant="outline" className="w-full mt-2" onClick={() => setShowAddProduct(true)}>
+                  + Add Real Product
+                </Button>
+                {showAddProduct && (
+                  <Dialog open={showAddProduct} onOpenChange={setShowAddProduct}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add a New Product</DialogTitle>
+                      </DialogHeader>
+                      <input
+                        className="w-full border p-1 rounded mb-1"
+                        placeholder="Product Name"
+                        value={newProduct.name}
+                        onChange={e => setNewProduct(p => ({ ...p, name: e.target.value }))}
+                      />
+                      <input
+                        className="w-full border p-1 rounded mb-1"
+                        placeholder="HTS Code"
+                        value={newProduct.htsCode}
+                        onChange={e => setNewProduct(p => ({ ...p, htsCode: e.target.value }))}
+                      />
+                      <textarea
+                        className="w-full border p-1 rounded mb-1"
+                        placeholder="Description"
+                        value={newProduct.description}
+                        onChange={e => setNewProduct(p => ({ ...p, description: e.target.value }))}
+                      />
+                      {/* Alternatives input (simple comma-separated for now) */}
+                      <input
+                        className="w-full border p-1 rounded mb-1"
+                        placeholder="Alternatives (comma separated names)"
+                        value={Array.isArray(newProduct.alternatives) ? newProduct.alternatives.map(a => a.name).join(', ') : ''}
+                        onChange={e => {
+                          const names = e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                          setNewProduct(p => ({
+                            ...p,
+                            alternatives: names.map((name, idx) => ({ id: `alt-${Date.now()}-${idx}`, name, htsCode: '', reason: '' }))
+                          }))
+                        }}
+                      />
+                      {addProductError && <div className="text-red-500 text-sm mb-2">{addProductError}</div>}
+                      <Button className="w-full" onClick={handleAddProduct}>Save Product</Button>
+                      <Button className="w-full mt-1" variant="ghost" onClick={() => { setShowAddProduct(false); setAddProductError(null); }}>Cancel</Button>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </>
             </CardContent>
           </Card>
         </div>
@@ -341,6 +658,16 @@ export const AIChatbotPage: React.FC = () => {
                     />
                   </div>
                 )}
+
+                {/* Export Conversation Button */}
+                <Button
+                  variant="outline"
+                  className="ml-auto"
+                  onClick={() => setShowExport(true)}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export Conversation
+                </Button>
               </div>
 
               {/* Messages */}
@@ -472,6 +799,13 @@ export const AIChatbotPage: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Export Dialog */}
+      <ConversationExport
+        conversationId={/* pass the current conversation ID or a placeholder */ 'current-conversation-id'}
+        isOpen={showExport}
+        onClose={() => setShowExport(false)}
+      />
     </div>
   )
 } 

@@ -8,11 +8,11 @@ from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models.tariff import HTSCode, TariffRate, TariffCalculation
-from ..models.country import Country
-from ..models.exchange_rate import ExchangeRate
-from ..core.logging import get_logger, log_business_event
-from .exchange_rate_service import ExchangeRateService
+from models.tariff import HTSCode, TariffRate, TariffCalculation
+from models.country import Country
+from models.exchange_rate import ExchangeRate
+from core.logging import get_logger, log_business_event
+from services.exchange_rate_service import ExchangeRateService
 
 logger = get_logger(__name__)
 

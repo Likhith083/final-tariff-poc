@@ -179,27 +179,9 @@ export const useTariffCalculation = () => {
   
   return useMutation({
     mutationFn: async (data: TariffCalculationRequest) => {
-      // Mock calculation
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      return {
-        success: true,
-        message: 'Calculation completed successfully',
-        data: {
-          hts_code: data.hts_code,
-          duty_amount: 150.00,
-          mpf_amount: 25.00,
-          hmf_amount: 0.125,
-          total_landed_cost: 1175.13,
-          calculation_breakdown: {
-            product_value: 1000.00,
-            freight_cost: data.freight_cost || 0,
-            insurance_cost: data.insurance_cost || 0,
-            duty_rate: 15.0,
-            mpf_rate: 0.3464,
-            hmf_rate: 0.125
-          }
-        }
-      }
+      // Use real API call instead of mock
+      const response = await api.tariff.calculate(data)
+      return response
     },
     onSuccess: (data) => {
       toast.success('Tariff calculation completed')

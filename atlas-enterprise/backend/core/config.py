@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     
     # Database - Allow any string for testing
     database_url: str = Field(
-        default="postgresql+asyncpg://atlas:atlas@localhost:5432/atlas_db",
+        default="sqlite+aiosqlite:///./data/atlas.db",
         env="DATABASE_URL"
     )
     
@@ -92,6 +92,7 @@ class Settings(BaseSettings):
     # File Storage
     upload_dir: str = Field(default="./uploads", env="UPLOAD_DIR")
     max_file_size: int = Field(default=10 * 1024 * 1024, env="MAX_FILE_SIZE")  # 10MB
+    data_dir: str = Field(default="./data", env="DATA_DIR")
     
     # Rate Limiting
     rate_limit_per_minute: int = Field(default=60, env="RATE_LIMIT_PER_MINUTE")

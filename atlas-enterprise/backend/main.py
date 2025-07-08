@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from core.config import settings
-from core.database import init_db, close_db, check_db_health
+from core.database import init_database, close_database, db_manager
 from core.logging import setup_logging, LoggingMiddleware, get_logger
 
 # Setup logging first
@@ -27,11 +27,17 @@ async def lifespan(app: FastAPI):
     
     try:
         # Initialize database
-        await init_db()
+        await init_database()
         logger.info("✅ Database initialized successfully")
         
         # Check database health
-        db_healthy = await check_db_health()
+        health = await db_manager.health_check()
+        import sys
+        print("\n========== DB Health Check Result ==========")
+        print(health)
+        print("===========================================\n")
+        sys.stdout.flush()
+        db_healthy = all(v.get('status') == 'healthy' for k, v in health.items() if k != 'timestamp')
         if not db_healthy:
             logger.error("❌ Database health check failed")
             raise Exception("Database not accessible")
@@ -48,7 +54,7 @@ async def lifespan(app: FastAPI):
     logger.info("🛑 Shutting down ATLAS Enterprise API")
     
     try:
-        await close_db()
+        await close_database()
         logger.info("✅ ATLAS Enterprise shutdown complete")
         
     except Exception as e:
@@ -113,7 +119,8 @@ def create_app() -> FastAPI:
         """Comprehensive health check endpoint."""
         
         # Check database
-        db_healthy = await check_db_health()
+        health = await db_manager.health_check()
+        db_healthy = all(v.get('status') == 'healthy' for k, v in health.items() if k != 'timestamp')
         
         health_status = {
             "success": True,
@@ -123,6 +130,7 @@ def create_app() -> FastAPI:
             "timestamp": time.time(),
             "checks": {
                 "database": "healthy" if db_healthy else "unhealthy",
+                "details": health,
                 "api": "healthy"
             }
         }
